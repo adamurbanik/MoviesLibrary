@@ -1,6 +1,6 @@
 var libraryProcessor = (function() {
 
-	var config = {
+	var _config = {
 		thumbs: "thumbs",
 		thumbWidth : 300,
 		thumbHeight : 300,
@@ -12,11 +12,12 @@ var libraryProcessor = (function() {
 
 	function init(localConfig) {
 		if (typeof localConfig !== "undefined")  {
-			config = commonComponents.overwrite(config, localConfig);
+			_config = commonComponents.overwrite(_config, localConfig);
 		}
 
-		libraryManagement.init(config);
-		libraryView.init(config)
+		libraryManagement.init(_config);
+		libraryActions.init(_config);
+		libraryView.init(_config)
 
 	}
 

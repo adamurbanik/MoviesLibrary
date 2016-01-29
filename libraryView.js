@@ -5,7 +5,9 @@ var libraryView = (function() {
 	function init(config) {
 		_config = config;
 		initalizeHandlers();
+		
 		loadImages();
+		
 	}
 
 	function initalizeHandlers() {
@@ -59,8 +61,10 @@ var libraryView = (function() {
 				var img = new Image();
 				img.onload = function(event) {
 					var thumb = event.currentTarget;
-					registerHandlersModule.addHandler(thumb, "click", thumbHandler);
-					document.getElementById(config.thumbs).appendChild(thumb);
+
+					libraryActions.createDropDownMenu(thumb);
+
+
 				}
 				img.src = movies[prop].thumb;
 				img.id = prop;
@@ -68,14 +72,23 @@ var libraryView = (function() {
 		}
 	}
 
-	function thumbHandler(event) {
-		
-		// removePlayer();
 
-		playVideo(event.currentTarget.id);
 
-		log(event.currentTarget.src);
-	}
+
+
+
+
+	// function thumbHandlerOut(event) {
+	// 	manageThumbMenu(event.currentTarget.id);
+	// }
+
+
+
+
+
+
+
+
 
 	function removePlayer() {
 		// // var player = document.getElementById("player");
@@ -92,9 +105,7 @@ var libraryView = (function() {
 
 	}
 
-	function playVideo(linkID) {
-		managePlayerYT.playVideo(_config, linkID);
-	}
+
 
 
 	/* open the movie for the clicked element*/
