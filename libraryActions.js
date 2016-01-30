@@ -9,14 +9,14 @@ var libraryActions = (function() {
 
 
 	function watchMovie() {}
-	function deleteMovie() {}
+	
 	function addFavouriteMovie() {}
 
 	/* When the user clicks on the thumb, 
 	toggle between hiding and showing the dropdown content */
 	function manageThumbMenu(thumbID) {
 		checkDropClassList();
-		document.getElementById(thumbID + "_ID").classList.toggle("show");
+		document.getElementById(thumbID + "_IDdiv").classList.toggle("show");
 	}
 
 	function initializeThumbMenu() {
@@ -49,12 +49,12 @@ var libraryActions = (function() {
 		registerHandlersModule.addHandler(thumb, "click", thumbHandler);
 
 		var div2 = document.createElement("div");
-		div2.id = thumb.id+"_ID";
+		div2.id = thumb.id+"_IDdiv";
 		div2.className = "dropdown-content";
 
-		createLink(div2, "Odtwarzaj", thumb.id);
-		createLink(div2, "link 2", thumb.id);
-		createLink(div2, "link 3", thumb.id);
+		createLink(div2, "Odtwarzaj", thumb.id, "1");
+		createLink(div2, "Usuń", thumb.id, "2");
+		createLink(div2, "Dodaj do ulubionych", thumb.id, "3");
 
 		div1.appendChild(div2);
 
@@ -64,18 +64,13 @@ var libraryActions = (function() {
 
 	function thumbHandler(event) {
 		// see what user decided to do
-
 		manageThumbMenu(event.currentTarget.id);
-		
-
-		
-		log(event.currentTarget.src);
 	} 
 
 
-	function createLink(parentElement, text, id) {
+	function createLink(parentElement, text, id, href) {
 		var a = document.createElement("a");
-		a.href = "#";
+		a.href = "#"+href;
 		a.id = id;
 		var text = document.createTextNode(text);
 		a.appendChild(text);
@@ -84,15 +79,44 @@ var libraryActions = (function() {
 	}
 
 	function linkHandler(event) {
-		playVideo(event.currentTarget.id);
-		log(event.currentTarget);
+		
+		var text = event.currentTarget.text;
+		switch(text) {
+			case "Odtwarzaj":
+				playVideo(event.currentTarget.id);
+				break;
+
+			case "Usuń":
+				deleteMovie(event.currentTarget.id)
+				break;
+
+			case "Dodaj do ulubionych":
+				addFavourite(event.currentTarget.id);
+				break;
+
+		}
+
 	}
 
 	function playVideo(linkID) {
 		managePlayerYT.playVideo(_config, linkID);
 	}
 
+	function deleteMovie(linkID) {
+		deleteThumbMenu(linkID);
+		libraryManagement.deleteMovie(linkID);
+	}
 
+	function addFavourite(linkID) {
+		libraryManagement.updateMovie(linkID, true);	
+	}
+
+
+	function deleteThumbMenu(linkID) {
+		var img = document.getElementById(linkID);
+		var dropdown = img.parentElement;
+		dropdown.parentElement.removeChild(dropdown);
+	}
 
 	function log(s) {
 		console.log(s)

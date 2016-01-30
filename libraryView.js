@@ -1,26 +1,27 @@
 var libraryView = (function() {
 
-	var _config;
+	var _config, _input, _filter;
 
 	function init(config) {
 		_config = config;
 		initalizeHandlers();
 		
-		loadImages();
+		loadImages(1);
 		
 	}
 
 	function initalizeHandlers() {
-		input = document.getElementById("linkInput");
+		_input = document.getElementById("linkInput");
 		button = document.getElementById("btnNewMovie");
 		registerHandlersModule.addHandler(button, "click", inputHandler);
 		var clearLib = document.getElementById("btnClearLib");
 		registerHandlersModule.addHandler(clearLib, "click", clearHandler);
-
+		_filter = document.getElementById("favouriteFilter");
+		registerHandlersModule.addHandler(_filter, "click", filterHandler);
 	}
 
 	function inputHandler() { 
-		value = input.value;
+		value = _input.value;
 
 		// get the link 	
 		var link = value;
@@ -28,13 +29,26 @@ var libraryView = (function() {
 		// get the linkID
 		var linkID = validateInput(link);
 		if (linkID !== -1) {
-			managePlayerYT.initializePlayer(config, linkID);	
+			managePlayerYT.playVideo(_config, linkID);
+			
 		} 
+		_input.value = "";
+		
 	}
 
 	function clearHandler() {
 		libraryManagement.clearRecords();
 	}
+
+	function filterHandler() {
+		if (_filter.value === "Wszystkie filmy") {
+			loadImages(1);
+		}
+		else if (_filter.value === "Ulubione") {
+			loadImages(2);
+		}
+
+	} 
 
 	function validateInput(link) {
 		return getYouTubeID(link);
@@ -51,75 +65,64 @@ var libraryView = (function() {
 	}
 
 	/* Get the list of all movies in the library and display them */
-	function loadImages() {
-		var movies = libraryManagement.getMovies();
-		var length = libraryManagement.getLibraryCount();
+	function loadImages(option) {
+		var player = document.getElementById("player");
+		var thumbs = document.getElementById("thumbs");
+		thumbs.parentNode.removeChild(thumbs);
+		var thumbs = document.createElement("div");
+		thumbs.id = "thumbs";
+		player.parentNode.insertBefore(thumbs, player);
+
+
+		var movies, length;
+		if (option === 1) {
+			movies = libraryManagement.getMovies();			
+		}
+		else if (option === 2) {
+			movies = libraryManagement.getFavouriteMovies();
+		}
 
 		for(var prop in movies) { 
-			if(movies.hasOwnProperty(prop)) {
-				
-				var img = new Image();
-				img.onload = function(event) {
-					var thumb = event.currentTarget;
-
-					libraryActions.createDropDownMenu(thumb);
-
-
-				}
-				img.src = movies[prop].thumb;
-				img.id = prop;
+			if(movies.hasOwnProperty(prop)) {				
+				createThumb(prop);
 			}
+		}
+	}
+
+	function createThumb(videoID) {
+		var movies = libraryManagement.getMovies();
+		var img = new Image();
+		img.onload = function(event) {
+			var thumb = event.currentTarget;
+
+			libraryActions.createDropDownMenu(thumb);	
+		}
+		img.src = movies[videoID].thumb;
+		img.id = videoID;
+	}
+
+
+
+	// update the view i.e. libraryView.Refresh - delete the thumb in the view plus delete the video player
+	function updateView(linkID, activity) {
+		if (activity === 1) {
+			createThumb(linkID);
+		}
+		else if (activity === 2) {
+
 		}
 	}
 
 
 
-
-
-
-
-	// function thumbHandlerOut(event) {
-	// 	manageThumbMenu(event.currentTarget.id);
-	// }
-
-
-
-
-
-
-
-
-
-	function removePlayer() {
-		// // var player = document.getElementById("player");
-		// // var player = document.querySelector("iFrame");
-		// var elemlist = document.getElementsByTagName("iFrame");
-
-		// log(elemlist);
-
-		// if(elemlist.length > 0) {
-		// 	var player = elemlist[0];
-		// 	player.parent.removeChild(player);	
-		// }
-		
-
-	}
-
-
-
-
-	/* open the movie for the clicked element*/
-	function openSource(event) {
-
-	}
-
 	function log(s) {
-		console.log(s)
+		console.log(s);
 	}
 
 
 	return {
-		init: init
+		init: init,
+		updateView: updateView
 	}
 
 }());

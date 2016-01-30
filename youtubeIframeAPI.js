@@ -6,7 +6,7 @@ var managePlayerYT = (function () {
 	var firstScriptTag = document.getElementsByTagName('script')[0];
 	firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-	var _playerOptions, _player, _title, _videoID, _iFrame;
+	var _playerOptions, _player, _iFrame;
 
 	function createPlayerOptions(config, videoID) {
 		_playerOptions = {};
@@ -32,7 +32,6 @@ var managePlayerYT = (function () {
 	}
 
 	function initializePlayer(config, videoID) {
-		_videoID = videoID;
 		createPlayerOptions(config, videoID);
 		createYTPlayer();
 	}
@@ -43,25 +42,21 @@ var managePlayerYT = (function () {
 
 	// 4. The API will call this function when the video player is ready.
 	function onPlayerReady(event) {
-		event.target.playVideo();
-		
+		event.target.playVideo();		
 		_iFrame = document.querySelector("iFrame");
-		// get the movie name
-		_title = event.target.getVideoData();
-
-		// save the video to library
-		libraryManagement.addMovie(_videoID, _title);		
 	}
 
 	// 5. The API calls this function when the player's state changes.
 	//    The function indicates that when playing a video (state=1),
 	//    the player should play for six seconds and then stop.
-	var done = false;
 	function onPlayerStateChange(event) {
-		if (event.data == YT.PlayerState.PLAYING && !done) {
+		// var videoData = event.target.getVideoData();
+		if (event.data == YT.PlayerState.PLAYING) {
 			setTimeout(stopVideo, 6000);
-			done = true;
+			var videoID = event.target.getVideoData()["video_id"];
+			libraryManagement.updateMovie(videoID, false, event.target.getVideoData());
 		}
+
 	}
 
 	function playVideo(config, linkID) {
@@ -69,7 +64,7 @@ var managePlayerYT = (function () {
 			initializePlayer(config, linkID);
 		}
 		else {
-			playCustomVideo(linkID);
+			_player.loadVideoById(linkID);
 		}
 	}
 
@@ -82,8 +77,9 @@ var managePlayerYT = (function () {
 		frameborder="0";	
 	}
 
-	function getMovieTitle() {
-		return _title;
+
+	function log(s) {
+		console.log(s)
 	}
 
 	return {
@@ -92,7 +88,6 @@ var managePlayerYT = (function () {
 		createYTPlayer: createYTPlayer,
 		getPlayer: getPlayer,
 		initializePlayer: initializePlayer,
-		getMovieTitle: getMovieTitle,
 		playVideo: playVideo,
 		playCustomVideo: playCustomVideo
 

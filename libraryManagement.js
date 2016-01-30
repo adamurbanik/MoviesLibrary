@@ -3,6 +3,7 @@ var libraryManagement = (function() {
 	var _movies;
 	var _input;
 	var _config;
+	var _favourMovies;
 
 	function init(config) {
 		_config = config;
@@ -13,21 +14,46 @@ var libraryManagement = (function() {
 	function initializeLibrary() {
 		_movies = JSON.parse(localStorage.getItem("_movies"));
 		if (_movies === null) {
-			_movies = {};	
+			_movies = {};
+		}
+		else {
+
 		}
 		log(getLibraryCount());
 	}
 
-	/* Add new movie into library */
-	function addMovie(linkID, title) {
-		var imageSource = "http://img.youtube.com/vi/"+linkID+"/1.jpg"; 
-		var date = Date();
-		
-		_movies[linkID] = {
-			title: title,
-			date: date,
-			thumb: imageSource
+	/* Add new movie into library. If the movie for the given videoID doesnt exist
+	new object is created. Otherwise existing objects needs only updating */
+	function updateMovie(videoID, favourite, videoData) {
+		if (_movies.hasOwnProperty(videoID)) {
+			_movies[videoID].favourite = favourite;
+
 		}
+		else {
+			var imageSource = "http://img.youtube.com/vi/"+videoID+"/1.jpg"; 
+			var date = Date();
+
+			var author = videoData["author"];
+			var title = videoData["title"];
+			var videoID = videoData["video_id"];
+
+			_movies[videoID] = {
+				title: title,
+				date: date,
+				thumb: imageSource,
+				author: author,
+				favourite: false
+
+			}
+			libraryView.updateView(videoID, 1);
+		}
+
+		updateStorage();
+		
+
+	}
+
+	function updateStorage() {
 		localStorage.setItem("_movies", JSON.stringify(_movies));
 	}
 
@@ -45,7 +71,31 @@ var libraryManagement = (function() {
 			return Object.keys(_movies).length;
 		}
 		return 0;
-		
+	}
+
+	function getFavouriteCount() {
+		if (_favourMovies !== null) {
+			return Object.keys(_movies).length;
+		}
+		return 0;
+	}
+
+	function deleteMovie(linkID) {
+		// find in the library movie by linkID
+		delete _movies[linkID];
+		updateStorage();
+	}
+
+	function getFavouriteMovies() {
+		_favourMovies = {};
+		for(var prop in _movies) {
+			if (_movies.hasOwnProperty(prop)) {
+				if (_movies[prop].favourite) {
+					_favourMovies[prop] = _movies[prop];
+				}
+			}
+		}
+		return _favourMovies;
 	}
 
 	function log(s) {
@@ -57,7 +107,7 @@ var libraryManagement = (function() {
 	function validateIfExists() {};
 	function updateRecord() {};
 	function getRecord() {};
-	function deleteRecord() {};
+	
 
 
 
@@ -70,10 +120,13 @@ var libraryManagement = (function() {
 
 	return {
 		init: init,
-		addMovie: addMovie,
+		updateMovie: updateMovie,
 		getMovies: getMovies,
 		getLibraryCount: getLibraryCount,
-		clearRecords: clearRecords
+		clearRecords: clearRecords,
+		deleteMovie: deleteMovie,
+		getFavouriteMovies: getFavouriteMovies,
+		getFavouriteCount: getFavouriteCount
 	}
 
 

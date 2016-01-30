@@ -5,10 +5,16 @@
 	<link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
-	<label>Please paste movie link</label>
+	<label>Wklej link do filmu</label>
 	<input type="text" id="linkInput" name="linkInput">
-	<button id="btnNewMovie">Add new movie</button>
-	<button id="btnClearLib">Empty library</button><br><br>
+	<button id="btnNewMovie">Dodaj nowy film</button>
+	<button id="btnClearLib">Wyczyść bibliotekę</button>
+	<select id="favouriteFilter"> 
+		<option>Wszystkie filmy</option>
+		<option>Ulubione</option>
+	</select>
+
+	<br><br>
 	<div id="thumbs"></div>
 	<div id="player"></div>
 
