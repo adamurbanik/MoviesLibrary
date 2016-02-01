@@ -7,11 +7,6 @@ var libraryActions = (function() {
 		initializeThumbMenu();
 	}
 
-
-	function watchMovie() {}
-	
-	function addFavouriteMovie() {}
-
 	/* When the user clicks on the thumb, 
 	toggle between hiding and showing the dropdown content */
 	function manageThumbMenu(thumbID) {
@@ -39,7 +34,7 @@ var libraryActions = (function() {
 		}		
 	}
 
-	function createDropDownMenu(thumb) {
+	function createDropDownMenu(thumb, movie) {
 		var div1 = document.createElement("div");
 		div1.className = "dropdown";
 		
@@ -47,6 +42,11 @@ var libraryActions = (function() {
 
 		div1.appendChild(thumb);
 		registerHandlersModule.addHandler(thumb, "click", thumbHandler);
+
+		createParagraphElem(div1, "Tytuł: " + movie["title"]);
+		createParagraphElem(div1, "Author: " + movie["author"]);
+		createParagraphElem(div1, "Data: " + movie["date"] );
+		createParagraphElem(div1, "Ulubiony: " + movie["favourite"]);
 
 		var div2 = document.createElement("div");
 		div2.id = thumb.id+"_IDdiv";
@@ -61,6 +61,14 @@ var libraryActions = (function() {
 		document.getElementById(_config.thumbs).appendChild(div1);
 
 	}
+
+	function createParagraphElem(parentElement, text) {
+		var p = document.createElement("p");
+		var text = document.createTextNode(text);
+		p.appendChild(text);
+		parentElement.appendChild(p);
+	}
+
 
 	function thumbHandler(event) {
 		// see what user decided to do
@@ -83,16 +91,16 @@ var libraryActions = (function() {
 		var text = event.currentTarget.text;
 		switch(text) {
 			case "Odtwarzaj":
-				playVideo(event.currentTarget.id);
-				break;
+			playVideo(event.currentTarget.id);
+			break;
 
 			case "Usuń":
-				deleteMovie(event.currentTarget.id)
-				break;
+			deleteMovie(event.currentTarget.id)
+			break;
 
 			case "Dodaj do ulubionych":
-				addFavourite(event.currentTarget.id);
-				break;
+			addFavourite(event.currentTarget.id);
+			break;
 
 		}
 

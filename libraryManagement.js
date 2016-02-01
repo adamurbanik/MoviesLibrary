@@ -16,9 +16,6 @@ var libraryManagement = (function() {
 		if (_movies === null) {
 			_movies = {};
 		}
-		else {
-
-		}
 		log(getLibraryCount());
 	}
 
@@ -31,7 +28,8 @@ var libraryManagement = (function() {
 		}
 		else {
 			var imageSource = "http://img.youtube.com/vi/"+videoID+"/1.jpg"; 
-			var date = Date();
+			var nowISOString = new Date().toISOString();
+			var now = Date.now();
 
 			var author = videoData["author"];
 			var title = videoData["title"];
@@ -39,13 +37,15 @@ var libraryManagement = (function() {
 
 			_movies[videoID] = {
 				title: title,
-				date: date,
+				date: nowISOString,
+				dateNumber: now,
 				thumb: imageSource,
 				author: author,
-				favourite: false
+				favourite: false,
+				videoID: videoID				
 
 			}
-			libraryView.updateView(videoID, 1);
+			libraryView.updateView(videoID);
 		}
 
 		updateStorage();
@@ -108,6 +108,7 @@ var libraryManagement = (function() {
 	function updateRecord() {};
 	function getRecord() {};
 	
+
 
 
 

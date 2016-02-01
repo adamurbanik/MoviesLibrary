@@ -15,3 +15,5 @@
 		// 		img.src = movies[prop].thumb;
 		// 	}
 		// }
+
+		// var now = new Date().toISOString().slice(0, 10);
