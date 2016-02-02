@@ -1,113 +1,116 @@
-var libraryManagement = (function() {
+$(document).ready(function(){
 
-	var _movies;
-	var _input;
-	var _config;
-	var _favourMovies;
 
-	function init(config) {
-		_config = config;
-		initializeLibrary();
-	}
+		window.myApp.libraryManagement = (function() {
 
-	/* Load all the records from the storage */
-	function initializeLibrary() {
-		_movies = JSON.parse(localStorage.getItem("_movies"));
-		if (_movies === null) {
-			_movies = {};
+		var _movies;
+		var _input;
+		var _config;
+		var _favourMovies;
+
+		function init(config) {
+			_config = config;
+			initializeLibrary();
 		}
-		log(getLibraryCount());
-	}
 
-	/* Add new movie into library. If the movie for the given videoID doesnt exist
-	new object is created. Otherwise existing objects needs only updating */
-	function updateMovie(videoID, favourite, videoData) {
-		if (_movies.hasOwnProperty(videoID)) {
-			_movies[videoID].favourite = favourite;
-
+		/* Load all the records from the storage */
+		function initializeLibrary() {
+			_movies = JSON.parse(localStorage.getItem("_movies"));
+			if (_movies === null) {
+				_movies = {};
+			}
+			log(getLibraryCount());
 		}
-		else {
-			var imageSource = "http://img.youtube.com/vi/"+videoID+"/1.jpg"; 
-			var nowISOString = new Date().toISOString();
-			var now = Date.now();
 
-			var author = videoData["author"];
-			var title = videoData["title"];
-			var videoID = videoData["video_id"];
-
-			_movies[videoID] = {
-				title: title,
-				date: nowISOString,
-				dateNumber: now,
-				thumb: imageSource,
-				author: author,
-				favourite: false,
-				videoID: videoID				
+		/* Add new movie into library. If the movie for the given videoID doesnt exist
+		new object is created. Otherwise existing objects needs only updating */
+		function updateMovie(videoID, favourite, videoData) {
+			if (_movies.hasOwnProperty(videoID)) {
+				_movies[videoID].favourite = favourite;
 
 			}
-			libraryView.updateView(videoID);
+			else {
+				var imageSource = "http://img.youtube.com/vi/"+videoID+"/1.jpg"; 
+				var nowISOString = new Date().toISOString();
+				var now = Date.now();
+
+				var author = videoData["author"];
+				var title = videoData["title"];
+				var videoID = videoData["video_id"];
+
+				_movies[videoID] = {
+					title: title,
+					date: nowISOString,
+					dateNumber: now,
+					thumb: imageSource,
+					author: author,
+					favourite: false,
+					videoID: videoID				
+
+				}
+				libraryView.updateView(videoID);
+			}
+
+			updateStorage();
+			
+
 		}
 
-		updateStorage();
-		
-
-	}
-
-	function updateStorage() {
-		localStorage.setItem("_movies", JSON.stringify(_movies));
-	}
-
-	function getMovies() {
-		return _movies;
-	}
-
-	function clearRecords() {
-		_movies = {};
-		localStorage.clear();
-	};
-
-	function getLibraryCount() {
-		if (_movies !== null) {
-			return Object.keys(_movies).length;
+		function updateStorage() {
+			localStorage.setItem("_movies", JSON.stringify(_movies));
 		}
-		return 0;
-	}
 
-	function getFavouriteCount() {
-		if (_favourMovies !== null) {
-			return Object.keys(_movies).length;
+		function getMovies() {
+			return _movies;
 		}
-		return 0;
-	}
 
-	function deleteMovie(linkID) {
-		// find in the library movie by linkID
-		delete _movies[linkID];
-		updateStorage();
-	}
+		function clearRecords() {
+			_movies = {};
+			localStorage.clear();
+		};
 
-	function getFavouriteMovies() {
-		_favourMovies = {};
-		for(var prop in _movies) {
-			if (_movies.hasOwnProperty(prop)) {
-				if (_movies[prop].favourite) {
-					_favourMovies[prop] = _movies[prop];
+		function getLibraryCount() {
+			if (_movies !== null) {
+				return Object.keys(_movies).length;
+			}
+			return 0;
+		}
+
+		function getFavouriteCount() {
+			if (_favourMovies !== null) {
+				return Object.keys(_movies).length;
+			}
+			return 0;
+		}
+
+		function deleteMovie(linkID) {
+			// find in the library movie by linkID
+			delete _movies[linkID];
+			updateStorage();
+		}
+
+		function getFavouriteMovies() {
+			_favourMovies = {};
+			for(var prop in _movies) {
+				if (_movies.hasOwnProperty(prop)) {
+					if (_movies[prop].favourite) {
+						_favourMovies[prop] = _movies[prop];
+					}
 				}
 			}
+			return _favourMovies;
 		}
-		return _favourMovies;
-	}
 
-	function log(s) {
-		console.log(s)
-	}
+		function log(s) {
+			console.log(s)
+		}
 
 
-	
-	function validateIfExists() {};
-	function updateRecord() {};
-	function getRecord() {};
-	
+		
+		function validateIfExists() {};
+		function updateRecord() {};
+		function getRecord() {};
+		
 
 
 
@@ -119,16 +122,16 @@ var libraryManagement = (function() {
 
 
 
-	return {
-		init: init,
-		updateMovie: updateMovie,
-		getMovies: getMovies,
-		getLibraryCount: getLibraryCount,
-		clearRecords: clearRecords,
-		deleteMovie: deleteMovie,
-		getFavouriteMovies: getFavouriteMovies,
-		getFavouriteCount: getFavouriteCount
-	}
+		return {
+			init: init,
+			updateMovie: updateMovie,
+			getMovies: getMovies,
+			getLibraryCount: getLibraryCount,
+			clearRecords: clearRecords,
+			deleteMovie: deleteMovie,
+			getFavouriteMovies: getFavouriteMovies,
+			getFavouriteCount: getFavouriteCount
+		}
 
 
 
@@ -136,9 +139,9 @@ var libraryManagement = (function() {
 
 
 
-}());
+	}());
 
-
+});
 
 // other useful things
 

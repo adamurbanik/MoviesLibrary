@@ -1,140 +1,146 @@
-var libraryActions = (function() {
+$(document).ready(
+	function(){
+		window.myApp.libraryActions = (function() {
 
-	var _config;
+			var _config;
 
-	function init(config) {
-		_config = config;
-		initializeThumbMenu();
-	}
+			function init(config) {
+				_config = config;
+				initializeThumbMenu();
+			}
 
-	/* When the user clicks on the thumb, 
-	toggle between hiding and showing the dropdown content */
-	function manageThumbMenu(thumbID) {
-		checkDropClassList();
-		document.getElementById(thumbID + "_IDdiv").classList.toggle("show");
-	}
-
-	function initializeThumbMenu() {
-		// Close the dropdown menu if the user clicks outside of it
-		window.onclick = function(event) {
-			if (!event.target.matches('.thumb')) {
+			/* When the user clicks on the thumb, 
+			toggle between hiding and showing the dropdown content */
+			function manageThumbMenu(thumbID) {
 				checkDropClassList();
+				document.getElementById(thumbID + "_IDdiv").classList.toggle("show");
 			}
-		}	
-	}
 
-	function checkDropClassList() {
-		var dropdowns = document.getElementsByClassName("dropdown-content");
-		var i;
-		for (i = 0; i < dropdowns.length; i++) {
-			var openDropdown = dropdowns[i];
-			if (openDropdown.classList.contains('show')) {
-				openDropdown.classList.remove('show');
+			function initializeThumbMenu() {
+				// Close the dropdown menu if the user clicks outside of it
+				window.onclick = function(event) {
+					if (!event.target.matches('.thumb')) {
+						checkDropClassList();
+					}
+				}	
 			}
-		}		
-	}
 
-	function createDropDownMenu(thumb, movie) {
-		var div1 = document.createElement("div");
-		div1.className = "dropdown";
-		
-		thumb.className = "thumb";
+			function checkDropClassList() {
+				var dropdowns = document.getElementsByClassName("dropdown-content");
+				var i;
+				for (i = 0; i < dropdowns.length; i++) {
+					var openDropdown = dropdowns[i];
+					if (openDropdown.classList.contains('show')) {
+						openDropdown.classList.remove('show');
+					}
+				}		
+			}
 
-		div1.appendChild(thumb);
-		registerHandlersModule.addHandler(thumb, "click", thumbHandler);
+			function createDropDownMenu(thumb, movie) {
+				var div1 = document.createElement("div");
+				div1.style.display = "none";
+				div1.className = "dropdown";
+				div1.classList.add("thumbs-el");
 
-		createParagraphElem(div1, "Tytuł: " + movie["title"]);
-		createParagraphElem(div1, "Author: " + movie["author"]);
-		createParagraphElem(div1, "Data: " + movie["date"] );
-		createParagraphElem(div1, "Ulubiony: " + movie["favourite"]);
+				thumb.className = "thumb";
 
-		var div2 = document.createElement("div");
-		div2.id = thumb.id+"_IDdiv";
-		div2.className = "dropdown-content";
+				div1.appendChild(thumb);
+				registerHandlersModule.addHandler(thumb, "click", thumbHandler);
 
-		createLink(div2, "Odtwarzaj", thumb.id, "1");
-		createLink(div2, "Usuń", thumb.id, "2");
-		createLink(div2, "Dodaj do ulubionych", thumb.id, "3");
+				createParagraphElem(div1, "Tytuł: " + movie["title"]);
+				createParagraphElem(div1, "Author: " + movie["author"]);
+				createParagraphElem(div1, "Data: " + movie["date"] );
+				createParagraphElem(div1, "Ulubiony: " + movie["favourite"]);
 
-		div1.appendChild(div2);
+				var div2 = document.createElement("div");
+				div2.id = thumb.id+"_IDdiv";
+				div2.className = "dropdown-content";
 
-		document.getElementById(_config.thumbs).appendChild(div1);
+				createLink(div2, "Odtwarzaj", thumb.id, "1");
+				createLink(div2, "Usuń", thumb.id, "2");
+				createLink(div2, "Dodaj do ulubionych", thumb.id, "3");
 
-	}
+				div1.appendChild(div2);
 
-	function createParagraphElem(parentElement, text) {
-		var p = document.createElement("p");
-		var text = document.createTextNode(text);
-		p.appendChild(text);
-		parentElement.appendChild(p);
-	}
-
-
-	function thumbHandler(event) {
-		// see what user decided to do
-		manageThumbMenu(event.currentTarget.id);
-	} 
+				document.getElementById(_config.thumbs).appendChild(div1);
 
 
-	function createLink(parentElement, text, id, href) {
-		var a = document.createElement("a");
-		a.href = "#"+href;
-		a.id = id;
-		var text = document.createTextNode(text);
-		a.appendChild(text);
-		registerHandlersModule.addHandler(a, "click", linkHandler);
-		parentElement.appendChild(a);
-	}
+			}
 
-	function linkHandler(event) {
-		
-		var text = event.currentTarget.text;
-		switch(text) {
-			case "Odtwarzaj":
-			playVideo(event.currentTarget.id);
-			break;
-
-			case "Usuń":
-			deleteMovie(event.currentTarget.id)
-			break;
-
-			case "Dodaj do ulubionych":
-			addFavourite(event.currentTarget.id);
-			break;
-
-		}
-
-	}
-
-	function playVideo(linkID) {
-		managePlayerYT.playVideo(_config, linkID);
-	}
-
-	function deleteMovie(linkID) {
-		deleteThumbMenu(linkID);
-		libraryManagement.deleteMovie(linkID);
-	}
-
-	function addFavourite(linkID) {
-		libraryManagement.updateMovie(linkID, true);	
-	}
+			function createParagraphElem(parentElement, text) {
+				var p = document.createElement("p");
+				var text = document.createTextNode(text);
+				p.appendChild(text);
+				parentElement.appendChild(p);
+			}
 
 
-	function deleteThumbMenu(linkID) {
-		var img = document.getElementById(linkID);
-		var dropdown = img.parentElement;
-		dropdown.parentElement.removeChild(dropdown);
-	}
-
-	function log(s) {
-		console.log(s)
-	}
-
-	return {
-		init: init,
-		createDropDownMenu: createDropDownMenu,
-		thumbHandler: thumbHandler
-	}
+			function thumbHandler(event) {
+				// see what user decided to do
+				manageThumbMenu(event.currentTarget.id);
+			} 
 
 
-}());
+			function createLink(parentElement, text, id, href) {
+				var a = document.createElement("a");
+				a.href = "#"+href;
+				a.id = id;
+				var text = document.createTextNode(text);
+				a.appendChild(text);
+				registerHandlersModule.addHandler(a, "click", linkHandler);
+				parentElement.appendChild(a);
+			}
+
+			function linkHandler(event) {
+				
+				var text = event.currentTarget.text;
+				switch(text) {
+					case "Odtwarzaj":
+					playVideo(event.currentTarget.id);
+					break;
+
+					case "Usuń":
+					deleteMovie(event.currentTarget.id)
+					break;
+
+					case "Dodaj do ulubionych":
+					addFavourite(event.currentTarget.id);
+					break;
+
+				}
+
+			}
+
+			function playVideo(linkID) {
+				managePlayerYT.playVideo(_config, linkID);
+			}
+
+			function deleteMovie(linkID) {
+				deleteThumbMenu(linkID);
+				libraryManagement.deleteMovie(linkID);
+			}
+
+			function addFavourite(linkID) {
+				libraryManagement.updateMovie(linkID, true);	
+			}
+
+
+			function deleteThumbMenu(linkID) {
+				var img = document.getElementById(linkID);
+				var dropdown = img.parentElement;
+				dropdown.parentElement.removeChild(dropdown);
+			}
+
+			function log(s) {
+				console.log(s)
+			}
+
+			return {
+				init: init,
+				createDropDownMenu: createDropDownMenu,
+				thumbHandler: thumbHandler
+			}
+
+
+		}());
+});

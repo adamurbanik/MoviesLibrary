@@ -1,100 +1,103 @@
-var managePlayerYT = (function () {
-	// 2. This code loads the IFrame Player API code asynchronously.	
-	var tag = document.createElement('script');
+$(document).ready(
+	function(){
 
-	tag.src = "https://www.youtube.com/iframe_api";
-	var firstScriptTag = document.getElementsByTagName('script')[0];
-	firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+		window.myApp.managePlayerYT = (function () {
+		// 2. This code loads the IFrame Player API code asynchronously.	
+		var tag = document.createElement('script');
 
-	var _playerOptions, _player, _iFrame;
+		tag.src = "https://www.youtube.com/iframe_api";
+		var firstScriptTag = document.getElementsByTagName('script')[0];
+		firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-	function createPlayerOptions(config, videoID) {
-		_playerOptions = {};
-		_playerOptions.height = config.height;
-		_playerOptions.width= config.width;
-		_playerOptions.videoId = videoID;
-		_playerOptions.events = {
-			'onReady': onPlayerReady,
-			'onStateChange': onPlayerStateChange  
-		}	
-	}
+		var _playerOptions, _player, _iFrame;
 
-	function getPlayerOptions() {
-		return _playerOptions;
-	}
-
-	function getPlayer() {
-		return _player;
-	}
-
-	function createYTPlayer() {
-		_player = new YT.Player('player', _playerOptions);	
-	}
-
-	function initializePlayer(config, videoID) {
-		createPlayerOptions(config, videoID);
-		createYTPlayer();
-	}
-
-	// 3. This function creates an <iframe> (and YouTube player)
-	//    after the API code downloads.
-	function onYouTubeIframeAPIReady() {}
-
-	// 4. The API will call this function when the video player is ready.
-	function onPlayerReady(event) {
-		event.target.playVideo();		
-		_iFrame = document.querySelector("iFrame");
-	}
-
-	// 5. The API calls this function when the player's state changes.
-	//    The function indicates that when playing a video (state=1),
-	//    the player should play for six seconds and then stop.
-	function onPlayerStateChange(event) {
-		// var videoData = event.target.getVideoData();
-		if (event.data == YT.PlayerState.PLAYING) {
-			setTimeout(stopVideo, 6000);
-			var videoID = event.target.getVideoData()["video_id"];
-			libraryManagement.updateMovie(videoID, false, event.target.getVideoData());
+		function createPlayerOptions(config, videoID) {
+			_playerOptions = {};
+			_playerOptions.height = config.height;
+			_playerOptions.width= config.width;
+			_playerOptions.videoId = videoID;
+			_playerOptions.events = {
+				'onReady': onPlayerReady,
+				'onStateChange': onPlayerStateChange  
+			}	
 		}
 
-	}
-
-	function playVideo(config, linkID) {
-		if (typeof _iFrame === "undefined") {
-			initializePlayer(config, linkID);
+		function getPlayerOptions() {
+			return _playerOptions;
 		}
-		else {
-			_player.loadVideoById(linkID);
+
+		function getPlayer() {
+			return _player;
 		}
-	}
 
-	function stopVideo() {
-		_player.stopVideo();
-	}
-	
-	function playCustomVideo(linkID) {
-		_iFrame.src = "http://www.youtube.com/embed/" + linkID + "?autoplay=1"
-		frameborder="0";	
-	}
+		function createYTPlayer() {
+			_player = new YT.Player('player', _playerOptions);	
+		}
+
+		function initializePlayer(config, videoID) {
+			createPlayerOptions(config, videoID);
+			createYTPlayer();
+		}
+
+		// 3. This function creates an <iframe> (and YouTube player)
+		//    after the API code downloads.
+		function onYouTubeIframeAPIReady() {}
+
+		// 4. The API will call this function when the video player is ready.
+		function onPlayerReady(event) {
+			event.target.playVideo();		
+			_iFrame = document.querySelector("iFrame");
+		}
+
+		// 5. The API calls this function when the player's state changes.
+		//    The function indicates that when playing a video (state=1),
+		//    the player should play for six seconds and then stop.
+		function onPlayerStateChange(event) {
+			// var videoData = event.target.getVideoData();
+			if (event.data == YT.PlayerState.PLAYING) {
+				setTimeout(stopVideo, 6000);
+				var videoID = event.target.getVideoData()["video_id"];
+				libraryManagement.updateMovie(videoID, false, event.target.getVideoData());
+			}
+
+		}
+
+		function playVideo(config, linkID) {
+			if (typeof _iFrame === "undefined") {
+				initializePlayer(config, linkID);
+			}
+			else {
+				_player.loadVideoById(linkID);
+			}
+		}
+
+		function stopVideo() {
+			_player.stopVideo();
+		}
+		
+		function playCustomVideo(linkID) {
+			_iFrame.src = "http://www.youtube.com/embed/" + linkID + "?autoplay=1"
+			frameborder="0";	
+		}
 
 
-	function log(s) {
-		console.log(s)
-	}
+		function log(s) {
+			console.log(s)
+		}
 
-	return {
-		createPlayerOptions: createPlayerOptions,
-		getPlayerOptions: getPlayerOptions,
-		createYTPlayer: createYTPlayer,
-		getPlayer: getPlayer,
-		initializePlayer: initializePlayer,
-		playVideo: playVideo,
-		playCustomVideo: playCustomVideo
+		return {
+			createPlayerOptions: createPlayerOptions,
+			getPlayerOptions: getPlayerOptions,
+			createYTPlayer: createYTPlayer,
+			getPlayer: getPlayer,
+			initializePlayer: initializePlayer,
+			playVideo: playVideo,
+			playCustomVideo: playCustomVideo
 
-	}
+		}
 
-}());
-
+	}());
+});
 
 
 
