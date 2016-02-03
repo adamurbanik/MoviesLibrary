@@ -1,5 +1,5 @@
 $(document).ready(function($){
-		window.myApp.libraryProcessor = (function() {
+		myApp.libraryProcessor = (function() {
 
 			var _config = {
 				thumbs: "thumbs",

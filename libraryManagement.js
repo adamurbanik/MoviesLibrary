@@ -1,7 +1,7 @@
 $(document).ready(function(){
 
 
-		window.myApp.libraryManagement = (function() {
+		myApp.libraryManagement = (function() {
 
 		var _movies;
 		var _input;
@@ -48,7 +48,8 @@ $(document).ready(function(){
 					videoID: videoID				
 
 				}
-				libraryView.updateView(videoID);
+				// ++_movies["length"];
+				myApp.libraryView.updateView(videoID);
 			}
 
 			updateStorage();
@@ -86,6 +87,7 @@ $(document).ready(function(){
 		function deleteMovie(linkID) {
 			// find in the library movie by linkID
 			delete _movies[linkID];
+			--_movies["length"]; 
 			updateStorage();
 		}
 

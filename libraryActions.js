@@ -1,6 +1,6 @@
 $(document).ready(
 	function(){
-		window.myApp.libraryActions = (function() {
+		myApp.libraryActions = (function() {
 
 			var _config;
 
@@ -38,7 +38,7 @@ $(document).ready(
 
 			function createDropDownMenu(thumb, movie) {
 				var div1 = document.createElement("div");
-				div1.style.display = "none";
+				// div1.style.display = "none";
 				div1.className = "dropdown";
 				div1.classList.add("thumbs-el");
 
@@ -112,16 +112,16 @@ $(document).ready(
 			}
 
 			function playVideo(linkID) {
-				managePlayerYT.playVideo(_config, linkID);
+				myApp.managePlayerYT.playVideo(_config, linkID);
 			}
 
 			function deleteMovie(linkID) {
 				deleteThumbMenu(linkID);
-				libraryManagement.deleteMovie(linkID);
+				myApp.libraryManagement.deleteMovie(linkID);
 			}
 
 			function addFavourite(linkID) {
-				libraryManagement.updateMovie(linkID, true);	
+				myApp.libraryManagement.updateMovie(linkID, true);	
 			}
 
 

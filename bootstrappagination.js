@@ -3,12 +3,9 @@ $(document).ready(
   function(){
 
     myApp.libraryPagination = (function() {    
-    var listElement, perPage, numItems, numPages;
+    var listElement, perPage, numItems, numPages, _display=1, page;
 
     function init() {
-      if(typeof listElement !== "undefined") {
-        listElement.parentElement.removeElement(listElement);
-      }
       listElement = document.getElementsByClassName("thumbs-el");
       perPage = 2; 
       numItems = listElement.length;
@@ -21,7 +18,15 @@ $(document).ready(
 
     function createPageLinks() {
       var curr = 0;
-      console.log(numPages > curr)
+      var pagerels = document.getElementsByClassName("pager-el");
+      
+      if (pagerels.length > 0) {
+        var pager = pagerels[0].parentElement;
+        for(var i = pagerels.length-1; i >= 0; i--) {
+          pager.removeChild(pagerels[i]);
+        }
+      }
+
       while(numPages > curr) {
         var link = document.createElement("a");
         link.href = "#";
@@ -46,7 +51,7 @@ $(document).ready(
 
       childNodesArr = childNodesArr.slice(startAt, perPage);
       childNodesArr.forEach(function(element) {
-        element.style.display = "block";
+        element.style.display = (_display === 1) ? "inline-block" : "block";
       });  
 
     }
@@ -61,15 +66,24 @@ $(document).ready(
 
     function goTo(e){
       var el = e.target;
-      var page = ~~el.innerHTML - 1;
-      var startAt = page * perPage,
-      endOn = startAt + perPage;
+      page = ~~el.innerHTML - 1;
+      var startAt = page * perPage;
+      var endOn = startAt + perPage;
+
 
       displayElements(startAt, endOn);
     }
 
+    function renderThumbs(display) {
+      _display = display;
+      var startAt = page * perPage;
+      var endOn = startAt + perPage;
+      displayElements(startAt, endOn);
+    }
+
     return {
-      init: init
+      init: init,
+      renderThumbs: renderThumbs
     }
 
   }());

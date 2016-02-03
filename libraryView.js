@@ -1,9 +1,9 @@
 $(document).ready(
 	function(){
 
-		window.myApp.libraryView = (function() {
+		myApp.libraryView = (function() {
 
-		var _config, _input, _filterFav, _filterSort;
+		var _config, _input, _filterFav, _filterSort, _paginFilter;
 
 		function init(config) {
 			_config = config;
@@ -15,12 +15,18 @@ $(document).ready(
 			_input = document.getElementById("linkInput");
 			button = document.getElementById("btnNewMovie");
 			registerHandlersModule.addHandler(button, "click", inputHandler);
+
 			var clearLib = document.getElementById("btnClearLib");
 			registerHandlersModule.addHandler(clearLib, "click", clearHandler);
+
 			_filterFav = document.getElementById("favouriteFilter");
 			registerHandlersModule.addHandler(_filterFav, "click", filterFavHandler);
+
 			_filterSort = document.getElementById("sortFilter");
 			registerHandlersModule.addHandler(_filterSort, "click", filterSortHandler);
+
+			_paginFilter = document.getElementById("paginFilter");
+			registerHandlersModule.addHandler(_paginFilter, "change", _paginFilterHandler);			
 		}
 
 		function inputHandler() { 
@@ -30,7 +36,7 @@ $(document).ready(
 
 			var linkID = validateInput(link);
 			if (linkID !== -1) {
-				managePlayerYT.playVideo(_config, linkID);
+				myApp.managePlayerYT.playVideo(_config, linkID);
 				
 			} 
 			_input.value = "";
@@ -38,7 +44,7 @@ $(document).ready(
 		}
 
 		function clearHandler() {
-			libraryManagement.clearRecords();
+			myApp.libraryManagement.clearRecords();
 		}
 
 		function filterFavHandler() {
@@ -49,11 +55,21 @@ $(document).ready(
 			displayThumbs();
 		} 
 
+		function _paginFilterHandler() {
+			if (_paginFilter.selectedIndex === 0) {
+				myApp.libraryPagination.renderThumbs(1); 
+			}
+			else if (_paginFilter.selectedIndex === 1) {
+				myApp.libraryPagination.renderThumbs(2);
+			}
+
+		}
+
 		function displayThumbs() {
 			if (_filterSort.selectedIndex === 0) {
 				sortMovies(1);
 			}
-			if(_filterSort.selectedIndex === 1) {
+			else if(_filterSort.selectedIndex === 1) {
 				sortMovies(1);
 			}
 			else if (_filterSort.selectedIndex === 2) {
@@ -156,6 +172,8 @@ $(document).ready(
 				var thumb = event.currentTarget;
 				myApp.libraryActions.createDropDownMenu(thumb, movie);
 				imgLoaded++;
+				log(imgLoaded);
+				log(imgNo);
 
 				if (imgLoaded === imgNo) {
 					myApp.libraryPagination.init();
@@ -167,7 +185,8 @@ $(document).ready(
 
 		function updateView(linkID) {
 			_filterFav.selectedIndex = 0;
-			loadImages(libraryManagement.getMovies());
+			// loadImages(myApp.libraryManagement.getMovies());
+			displayThumbs();
 		}
 
 

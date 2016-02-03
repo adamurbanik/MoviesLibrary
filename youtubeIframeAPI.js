@@ -1,7 +1,7 @@
 $(document).ready(
 	function(){
 
-		window.myApp.managePlayerYT = (function () {
+		myApp.managePlayerYT = (function () {
 		// 2. This code loads the IFrame Player API code asynchronously.	
 		var tag = document.createElement('script');
 
@@ -57,7 +57,7 @@ $(document).ready(
 			if (event.data == YT.PlayerState.PLAYING) {
 				setTimeout(stopVideo, 6000);
 				var videoID = event.target.getVideoData()["video_id"];
-				libraryManagement.updateMovie(videoID, false, event.target.getVideoData());
+				myApp.libraryManagement.updateMovie(videoID, false, event.target.getVideoData());
 			}
 
 		}
