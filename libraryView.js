@@ -20,16 +20,19 @@ $(document).ready(
 			registerHandlersModule.addHandler(clearLib, "click", clearHandler);
 
 			_filterFav = document.getElementById("favouriteFilter");
-			registerHandlersModule.addHandler(_filterFav, "click", filterFavHandler);
+			registerHandlersModule.addHandler(_filterFav, "change", filterFavHandler);
 
 			_filterSort = document.getElementById("sortFilter");
-			registerHandlersModule.addHandler(_filterSort, "click", filterSortHandler);
+			registerHandlersModule.addHandler(_filterSort, "change", filterSortHandler);
 
 			_paginFilter = document.getElementById("paginFilter");
-			registerHandlersModule.addHandler(_paginFilter, "change", _paginFilterHandler);			
+			registerHandlersModule.addHandler(_paginFilter, "change", paginFilterHandler);
+
+			_paginNumber = document.getElementById("paginNumber");
+			registerHandlersModule.addHandler(_paginNumber, "change", paginNumberHandler);
 		}
 
-		function inputHandler() { 
+		function inputHandler() {
 			value = _input.value;
 
 			var link = value;
@@ -37,10 +40,8 @@ $(document).ready(
 			var linkID = validateInput(link);
 			if (linkID !== -1) {
 				myApp.managePlayerYT.playVideo(_config, linkID);
-				
-			} 
+			}
 			_input.value = "";
-			
 		}
 
 		function clearHandler() {
@@ -53,16 +54,22 @@ $(document).ready(
 
 		function filterSortHandler() {
 			displayThumbs();
-		} 
+		}
 
-		function _paginFilterHandler() {
+		function paginFilterHandler() {
 			if (_paginFilter.selectedIndex === 0) {
-				myApp.libraryPagination.renderThumbs(1); 
+				myApp.libraryPagination.renderThumbs(1, 5);
 			}
 			else if (_paginFilter.selectedIndex === 1) {
-				myApp.libraryPagination.renderThumbs(2);
+				myApp.libraryPagination.renderThumbs(2, 5);
 			}
+		}
 
+		function paginNumberHandler(e) {
+			var paginOption = e.currentTarget.options.selectedIndex;
+			log(e.currentTarget[paginOption].value);
+			var paginNo = e.currentTarget[paginOption].value;
+			myApp.libraryPagination.renderThumbs(1, paginNo);
 		}
 
 		function displayThumbs() {
@@ -84,7 +91,7 @@ $(document).ready(
 				if(obj.hasOwnProperty(prop)) {
 					arr.push({
 						'key': prop,
-						'value': obj[prop] 
+						'value': obj[prop]
 					});
 				}
 			}
@@ -98,7 +105,7 @@ $(document).ready(
 				arr.sort(function(a, b) {
 					return a.value.dateNumber + b.value.dateNumber;
 				});
-			} 
+			}
 			return arr;
 		}
 
@@ -145,7 +152,7 @@ $(document).ready(
 
 			player.parentNode.insertBefore(thumbs, player);
 
-			// do the pagination here 
+			// do the pagination here
 
 			imgNo = movies.length;
 			imgLoaded = 0;
@@ -156,8 +163,8 @@ $(document).ready(
 				}
 			}
 			else {
-				for(var prop in movies) { 
-					if(movies.hasOwnProperty(prop)) {				
+				for(var prop in movies) {
+					if(movies.hasOwnProperty(prop)) {
 						createThumb(movies[prop]);
 					}
 				}
@@ -176,7 +183,7 @@ $(document).ready(
 				log(imgNo);
 
 				if (imgLoaded === imgNo) {
-					myApp.libraryPagination.init();
+					myApp.libraryPagination.init(_config);
 				}
 			}
 			img.src = movie.thumb;
@@ -185,7 +192,6 @@ $(document).ready(
 
 		function updateView(linkID) {
 			_filterFav.selectedIndex = 0;
-			// loadImages(myApp.libraryManagement.getMovies());
 			displayThumbs();
 		}
 
