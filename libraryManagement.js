@@ -30,7 +30,7 @@ $(document).ready(function(){
 
 			}
 			else {
-				var imageSource = "http://img.youtube.com/vi/"+videoID+"/1.jpg"; 
+				var imageSource = "http://img.youtube.com/vi/"+videoID+"/1.jpg";
 				var nowISOString = new Date().toISOString();
 				var now = Date.now();
 
@@ -45,24 +45,17 @@ $(document).ready(function(){
 					thumb: imageSource,
 					author: author,
 					favourite: false,
-					videoID: videoID				
+					videoID: videoID
 
 				}
-				// ++_movies["length"];
-				myApp.libraryView.updateView(videoID);
+				// myApp.libraryView.updateView(videoID);
 			}
-
+			myApp.libraryView.render();
 			updateStorage();
-			
-
 		}
 
 		function updateStorage() {
 			localStorage.setItem("_movies", JSON.stringify(_movies));
-		}
-
-		function getMovies() {
-			return _movies;
 		}
 
 		function clearRecords() {
@@ -87,8 +80,12 @@ $(document).ready(function(){
 		function deleteMovie(linkID) {
 			// find in the library movie by linkID
 			delete _movies[linkID];
-			--_movies["length"]; 
+			--_movies["length"];
 			updateStorage();
+		}
+
+		function getMovies() {
+			return _movies;
 		}
 
 		function getFavouriteMovies() {
@@ -103,16 +100,32 @@ $(document).ready(function(){
 			return _favourMovies;
 		}
 
+		/* option - sort option, 0 - newest, 1 - oldest
+			favorite - favourite movies - true, otherwise - false	*/
+		function sortMovies(favourite, option) {
+			var movies = {};
+			if (!favourite) {
+				movies = getMovies();
+			}
+			else if (favourite) {
+				movies = getFavouriteMovies();
+			}
+
+			var moviesArr = commonComponents.getSortedArray(movies, option);
+			return moviesArr;
+		}
+
+
 		function log(s) {
 			console.log(s)
 		}
 
 
-		
+
 		function validateIfExists() {};
 		function updateRecord() {};
 		function getRecord() {};
-		
+
 
 
 
@@ -132,7 +145,8 @@ $(document).ready(function(){
 			clearRecords: clearRecords,
 			deleteMovie: deleteMovie,
 			getFavouriteMovies: getFavouriteMovies,
-			getFavouriteCount: getFavouriteCount
+			getFavouriteCount: getFavouriteCount,
+			sortMovies: sortMovies
 		}
 
 

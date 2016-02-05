@@ -3,12 +3,12 @@ $(document).ready(
 
 		myApp.libraryView = (function() {
 
-		var _config, _input, _filterFav, _filterSort, _paginFilter;
+		var _config, _input, _filterFav, _filterSort, _paginType;
 
 		function init(config) {
 			_config = config;
 			initalizeHandlers();
-			displayThumbs();
+			render();
 		}
 
 		function initalizeHandlers() {
@@ -25,8 +25,8 @@ $(document).ready(
 			_filterSort = document.getElementById("sortFilter");
 			registerHandlersModule.addHandler(_filterSort, "change", filterSortHandler);
 
-			_paginFilter = document.getElementById("paginFilter");
-			registerHandlersModule.addHandler(_paginFilter, "change", paginFilterHandler);
+			_paginType = document.getElementById("paginType");
+			registerHandlersModule.addHandler(_paginType, "change", paginTypeHandler);
 
 			_paginNumber = document.getElementById("paginNumber");
 			registerHandlersModule.addHandler(_paginNumber, "change", paginNumberHandler);
@@ -49,79 +49,34 @@ $(document).ready(
 		}
 
 		function filterFavHandler() {
-			displayThumbs();
+			render();
 		}
 
 		function filterSortHandler() {
-			displayThumbs();
+			render();
 		}
 
-		function paginFilterHandler() {
-			if (_paginFilter.selectedIndex === 0) {
-				myApp.libraryPagination.renderThumbs(1, 5);
-			}
-			else if (_paginFilter.selectedIndex === 1) {
-				myApp.libraryPagination.renderThumbs(2, 5);
-			}
+		function paginTypeHandler() {
+			render();
 		}
 
 		function paginNumberHandler(e) {
-			var paginOption = e.currentTarget.options.selectedIndex;
-			log(e.currentTarget[paginOption].value);
-			var paginNo = e.currentTarget[paginOption].value;
-			myApp.libraryPagination.renderThumbs(1, paginNo);
+			render();
+		}
+
+		function getPaginNumber() {
+			var paginOption = _paginNumber.options.selectedIndex;
+			var paginNo = _paginNumber[paginOption].value;
+			return paginNo;
+		}
+
+		function getPaginType() {
+			return paginType.selectedIndex;
 		}
 
 		function displayThumbs() {
-			if (_filterSort.selectedIndex === 0) {
-				sortMovies(1);
-			}
-			else if(_filterSort.selectedIndex === 1) {
-				sortMovies(1);
-			}
-			else if (_filterSort.selectedIndex === 2) {
-				sortMovies(2);
-			}
-		}
-
-		/* 1 - sort by the oldest, 2 - the newest */
-		function getSortedArray(obj, sort) {
-			var arr = [];
-			for(var prop in obj) {
-				if(obj.hasOwnProperty(prop)) {
-					arr.push({
-						'key': prop,
-						'value': obj[prop]
-					});
-				}
-			}
-
-			if(sort === 1) {
-				arr.sort(function(a, b) {
-					return a.value.dateNumber - b.value.dateNumber;
-				});
-			}
-			else if(sort === 2) {
-				arr.sort(function(a, b) {
-					return a.value.dateNumber + b.value.dateNumber;
-				});
-			}
-			return arr;
-		}
-
-		function sortMovies(option) {
-			var movies = {};
-			if (_filterFav.selectedIndex === 0) {
-				movies = myApp.libraryManagement.getMovies();
-			}
-			else if (_filterFav.selectedIndex === 1) {
-				movies = myApp.libraryManagement.getFavouriteMovies();
-			}
-
-			var moviesArr = getSortedArray(movies, option);
-
-			loadImages(moviesArr);
-
+				var movies = myApp.libraryManagement.sortMovies(_filterFav.selectedIndex, _filterSort.selectedIndex)
+				loadImages(movies);
 		}
 
 		function validateInput(link) {
@@ -138,22 +93,28 @@ $(document).ready(
 			}
 		}
 
-
-		var imgNo, imgLoaded;
-
-		/* Get the list of all movies in the library and display them */
-		function loadImages(movies) {
+		/* remove existing thumbs element and create empty one*/
+		function prepareThumbs() {
 			var player = document.getElementById("player");
 			var thumbs = document.getElementById("thumbs");
 			thumbs.parentNode.removeChild(thumbs);
 			var thumbs = document.createElement("div");
 			thumbs.id = "thumbs";
 			thumbs.setAttribute("class", "nav nav-tabs nav-stacked");
-
 			player.parentNode.insertBefore(thumbs, player);
+		}
 
-			// do the pagination here
 
+
+		var imgNo, imgLoaded;
+
+		/* Get the list of all movies in the library and display them */
+		function loadImages(movies) {
+			prepareThumbs();
+			createThumbs(movies);
+		}
+
+		function createThumbs(movies) {
 			imgNo = movies.length;
 			imgLoaded = 0;
 
@@ -170,8 +131,8 @@ $(document).ready(
 				}
 			}
 
-
 		}
+
 
 		function createThumb(movie) {
 			var img = new Image();
@@ -179,11 +140,9 @@ $(document).ready(
 				var thumb = event.currentTarget;
 				myApp.libraryActions.createDropDownMenu(thumb, movie);
 				imgLoaded++;
-				log(imgLoaded);
-				log(imgNo);
 
 				if (imgLoaded === imgNo) {
-					myApp.libraryPagination.init(_config);
+					myApp.libraryPagination.init(getPaginType(), getPaginNumber());
 				}
 			}
 			img.src = movie.thumb;
@@ -192,10 +151,12 @@ $(document).ready(
 
 		function updateView(linkID) {
 			_filterFav.selectedIndex = 0;
-			displayThumbs();
+			render();
 		}
 
-
+		function render() {
+			displayThumbs();
+		}
 
 
 		function log(s) {

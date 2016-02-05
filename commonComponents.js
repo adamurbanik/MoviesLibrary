@@ -10,8 +10,38 @@ var commonComponents = (function() {
 		return obj1;
 	}
 
+	/* 1 - sort by the oldest, 2 - the newest */
+	function getSortedArray(obj, sort) {
+		var arr = [];
+		for(var prop in obj) {
+			if(obj.hasOwnProperty(prop)) {
+				arr.push({
+					'key': prop,
+					'value': obj[prop]
+				});
+			}
+		}
+
+		if(sort === 0) {
+			arr.sort(function(a, b) {
+				return a.value.dateNumber - b.value.dateNumber;
+			});
+		}
+		else if(sort === 1) {
+			arr.sort(function(a, b) {
+				return a.value.dateNumber + b.value.dateNumber;
+			});
+		}
+		return arr;
+	}
+
+
+
+
+
 	return {
-		overwrite: overwrite
+		overwrite: overwrite,
+		getSortedArray: getSortedArray
 	}
 
 }());

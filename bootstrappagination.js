@@ -3,19 +3,22 @@ $(document).ready(
   function() {
 
     myApp.libraryPagination = (function() {
-      /* display - 1: kafelki, 2: list  */
-    var listElement, _per_page, numItems, num_pages, _display=1, _page, _config;
 
-    function init(config) {
-      _config = config;
-      listElement = document.getElementsByClassName("thumbs-el");
-      _per_page = _config["pagination"];
-      numItems = listElement.length;
-      num_pages = Math.ceil(numItems/_per_page);
-      _page = 0;
+    var listElement, _per_page, numItems, num_pages, _display, _page=0;
+
+    function init(display, per_page) {
+      setPagination(display, per_page);
       create_pageLinks();
       displayElements(_page, _per_page);
       addListeners();
+    }
+
+    function setPagination(display, per_page) {
+      _display = display;
+      _per_page = per_page;
+      listElement = document.getElementsByClassName("thumbs-el");
+      numItems = listElement.length;
+      num_pages = Math.ceil(numItems/_per_page);
     }
 
     function create_pageLinks() {
@@ -53,7 +56,7 @@ $(document).ready(
 
       childNodesArr = childNodesArr.slice(startAt, _per_page);
       childNodesArr.forEach(function(element) {
-        element.style.display = (_display === 1) ? "inline-block" : "block";
+        element.style.display = (_display === 0) ? "inline-block" : "block";
       });
 
     }
@@ -76,6 +79,8 @@ $(document).ready(
       displayElements(startAt, endOn);
     }
 
+    /* display - 1: kafelki, 2: list
+     per_page - number of elements per page */
     function renderThumbs(display, per_page) {
       _display = display;
       _per_page = ~~per_page;
