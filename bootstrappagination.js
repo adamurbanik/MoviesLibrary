@@ -19,19 +19,12 @@ $(document).ready(
       listElement = document.getElementsByClassName("thumbs-el");
       numItems = listElement.length;
       num_pages = Math.ceil(numItems/_per_page);
+
     }
 
     function create_pageLinks() {
+      removePagination();
       var curr = 0;
-      var _pagerels = document.getElementsByClassName("pager-el");
-
-      if (_pagerels.length > 0) {
-        var _pager = _pagerels[0].parentElement;
-        for(var i = _pagerels.length-1; i >= 0; i--) {
-          _pager.removeChild(_pagerels[i]);
-        }
-      }
-
       while(num_pages > curr) {
         var link = document.createElement("a");
         link.href = "#";
@@ -45,6 +38,16 @@ $(document).ready(
         curr++;
       }
       document.getElementsByClassName("page_link")[0].classList.add("active");
+    }
+
+    function removePagination() {
+      var _pagerels = document.getElementsByClassName("pager-el");
+      if (_pagerels.length > 0) {
+        var _pager = _pagerels[0].parentElement;
+        for(var i = _pagerels.length-1; i >= 0; i--) {
+          _pager.removeChild(_pagerels[i]);
+        }
+      }
     }
 
 
@@ -91,7 +94,7 @@ $(document).ready(
 
     return {
       init: init,
-      renderThumbs: renderThumbs
+      removePagination: removePagination
     }
 
   }());

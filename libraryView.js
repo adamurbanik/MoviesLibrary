@@ -20,16 +20,18 @@ $(document).ready(
 			registerHandlersModule.addHandler(clearLib, "click", clearHandler);
 
 			_filterFav = document.getElementById("favouriteFilter");
-			registerHandlersModule.addHandler(_filterFav, "change", filterFavHandler);
+			registerHandlersModule.addHandler(_filterFav, "change", render);
 
 			_filterSort = document.getElementById("sortFilter");
-			registerHandlersModule.addHandler(_filterSort, "change", filterSortHandler);
+			registerHandlersModule.addHandler(_filterSort, "change", render);
 
 			_paginType = document.getElementById("paginType");
-			registerHandlersModule.addHandler(_paginType, "change", paginTypeHandler);
+			registerHandlersModule.addHandler(_paginType, "change", render);
 
 			_paginNumber = document.getElementById("paginNumber");
-			registerHandlersModule.addHandler(_paginNumber, "change", paginNumberHandler);
+			registerHandlersModule.addHandler(_paginNumber, "change", render);
+
+			registerHandlersModule.addHandler(document.body, "collection:sync", render);
 		}
 
 		function inputHandler() {
@@ -46,22 +48,6 @@ $(document).ready(
 
 		function clearHandler() {
 			myApp.libraryManagement.clearRecords();
-		}
-
-		function filterFavHandler() {
-			render();
-		}
-
-		function filterSortHandler() {
-			render();
-		}
-
-		function paginTypeHandler() {
-			render();
-		}
-
-		function paginNumberHandler(e) {
-			render();
 		}
 
 		function getPaginNumber() {
@@ -118,19 +104,11 @@ $(document).ready(
 			imgNo = movies.length;
 			imgLoaded = 0;
 
-			if (movies instanceof Array) {
-				for(var i = 0; i < movies.length; i++) {
-					createThumb(movies[i].value);
-				}
+			if(movies instanceof Array) {
+				movies.forEach(function(movie) {
+					createThumb(movie);
+				});
 			}
-			else {
-				for(var prop in movies) {
-					if(movies.hasOwnProperty(prop)) {
-						createThumb(movies[prop]);
-					}
-				}
-			}
-
 		}
 
 
@@ -145,8 +123,8 @@ $(document).ready(
 					myApp.libraryPagination.init(getPaginType(), getPaginNumber());
 				}
 			}
-			img.src = movie.thumb;
-			img.id = movie.videoID;
+			img.src = movie.model.thumb;
+			img.id = movie.model.videoID;
 		}
 
 		function updateView(linkID) {
@@ -155,6 +133,7 @@ $(document).ready(
 		}
 
 		function render() {
+			myApp.libraryPagination.removePagination();
 			displayThumbs();
 		}
 
@@ -166,7 +145,7 @@ $(document).ready(
 
 		return {
 			init: init,
-			updateView: updateView
+			render: render
 		}
 
 	}());

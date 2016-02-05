@@ -28,4 +28,4 @@
     removeHandler : removeHandler
   }
 
-}()); 
+}());

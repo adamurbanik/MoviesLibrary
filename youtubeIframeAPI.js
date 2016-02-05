@@ -2,7 +2,7 @@ $(document).ready(
 	function(){
 
 		myApp.managePlayerYT = (function () {
-		// 2. This code loads the IFrame Player API code asynchronously.	
+		// 2. This code loads the IFrame Player API code asynchronously.
 		var tag = document.createElement('script');
 
 		tag.src = "https://www.youtube.com/iframe_api";
@@ -18,8 +18,8 @@ $(document).ready(
 			_playerOptions.videoId = videoID;
 			_playerOptions.events = {
 				'onReady': onPlayerReady,
-				'onStateChange': onPlayerStateChange  
-			}	
+				'onStateChange': onPlayerStateChange
+			}
 		}
 
 		function getPlayerOptions() {
@@ -31,7 +31,7 @@ $(document).ready(
 		}
 
 		function createYTPlayer() {
-			_player = new YT.Player('player', _playerOptions);	
+			_player = new YT.Player('player', _playerOptions);
 		}
 
 		function initializePlayer(config, videoID) {
@@ -45,7 +45,7 @@ $(document).ready(
 
 		// 4. The API will call this function when the video player is ready.
 		function onPlayerReady(event) {
-			event.target.playVideo();		
+			event.target.playVideo();
 			_iFrame = document.querySelector("iFrame");
 		}
 
@@ -57,7 +57,8 @@ $(document).ready(
 			if (event.data == YT.PlayerState.PLAYING) {
 				setTimeout(stopVideo, 6000);
 				var videoID = event.target.getVideoData()["video_id"];
-				myApp.libraryManagement.updateMovie(videoID, false, event.target.getVideoData());
+				// myApp.libraryManagement.updateMovie(videoID, false, event.target.getVideoData());
+				myApp.libraryManagement.addToCollection(event.target.getVideoData());
 			}
 
 		}
@@ -74,10 +75,10 @@ $(document).ready(
 		function stopVideo() {
 			_player.stopVideo();
 		}
-		
+
 		function playCustomVideo(linkID) {
 			_iFrame.src = "http://www.youtube.com/embed/" + linkID + "?autoplay=1"
-			frameborder="0";	
+			frameborder="0";
 		}
 
 
@@ -98,9 +99,3 @@ $(document).ready(
 
 	}());
 });
-
-
-
-
-
-

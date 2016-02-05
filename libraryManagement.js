@@ -3,10 +3,12 @@ $(document).ready(function(){
 
 		myApp.libraryManagement = (function() {
 
-		var _movies;
+		// var _movies;
+		var _moviesArr;
+		var _moviesArrFavour;
 		var _input;
 		var _config;
-		var _favourMovies;
+		// var _favourMovies;
 
 		function init(config) {
 			_config = config;
@@ -15,104 +17,109 @@ $(document).ready(function(){
 
 		/* Load all the records from the storage */
 		function initializeLibrary() {
-			_movies = JSON.parse(localStorage.getItem("_movies"));
-			if (_movies === null) {
-				_movies = {};
-			}
-			log(getLibraryCount());
+			var result = [];
+			var __moviesArr = JSON.parse(localStorage.getItem("_movies")) || [];
+			console.log(__moviesArr);
+			__moviesArr.forEach(function(item, index){
+				result.push(createModel(item.model));
+			});
+			_moviesArr = result;
 		}
 
-		/* Add new movie into library. If the movie for the given videoID doesnt exist
-		new object is created. Otherwise existing objects needs only updating */
-		function updateMovie(videoID, favourite, videoData) {
-			if (_movies.hasOwnProperty(videoID)) {
-				_movies[videoID].favourite = favourite;
+		function createModel(videoData) {
+			var videoId = videoData["video_id"] || videoData["videoID"];
+			var model = {
+				title: videoData["title"],
+				date: new Date().toISOString(),
+				dateNumber: Date.now(),
+				thumb: "http://img.youtube.com/vi/"+videoId+"/1.jpg",
+				author: videoData["author"],
+				favourite: videoData["favourite"] || false,
+				videoID: videoId
+			};
 
+			return {
+				model: model
 			}
-			else {
-				var imageSource = "http://img.youtube.com/vi/"+videoID+"/1.jpg";
-				var nowISOString = new Date().toISOString();
-				var now = Date.now();
+		}
 
-				var author = videoData["author"];
-				var title = videoData["title"];
-				var videoID = videoData["video_id"];
-
-				_movies[videoID] = {
-					title: title,
-					date: nowISOString,
-					dateNumber: now,
-					thumb: imageSource,
-					author: author,
-					favourite: false,
-					videoID: videoID
-
-				}
-				// myApp.libraryView.updateView(videoID);
-			}
-			myApp.libraryView.render();
+		function addToCollection(videoData) {
+			_moviesArr.push(createModel(videoData));
 			updateStorage();
 		}
 
 		function updateStorage() {
-			localStorage.setItem("_movies", JSON.stringify(_movies));
+			localStorage.setItem("_movies", JSON.stringify(_moviesArr));
+			document.body.dispatchEvent(new Event('collection:sync'));
 		}
 
 		function clearRecords() {
-			_movies = {};
-			localStorage.clear();
+			_moviesArr = [];
+			updateStorage();
 		};
 
 		function getLibraryCount() {
-			if (_movies !== null) {
-				return Object.keys(_movies).length;
+			if (typeof _moviesArr === "array") {
+				return _moviesArr.length;
 			}
 			return 0;
 		}
 
 		function getFavouriteCount() {
-			if (_favourMovies !== null) {
-				return Object.keys(_movies).length;
+			if (typeof _moviesArrFavour === "array") {
+				return _moviesArrFavour.length;
 			}
 			return 0;
 		}
 
-		function deleteMovie(linkID) {
-			// find in the library movie by linkID
-			delete _movies[linkID];
-			--_movies["length"];
+		function getMovieByVideoId(videoID) {
+			for (var i = 0; i < _moviesArr.length; i++) {
+				if (_moviesArr[i].model.videoID == videoID) {
+					return _moviesArr[i];
+				}
+			}
+		}
+
+		function markVideoAsFavour(videoId) {
+			var vid = getMovieByVideoId(videoId);
+			_moviesArr.splice(_moviesArr.indexOf(vid), 1);
+			vid.model.favourite = true;
+			addToCollection(vid.model);
+		}
+
+		function deleteMovie(videoID) {
+			var vid = getMovieByVideoId(videoID);
+			_moviesArr.splice(vid, 1);
 			updateStorage();
 		}
 
 		function getMovies() {
-			return _movies;
+			return _moviesArr;
 		}
 
 		function getFavouriteMovies() {
-			_favourMovies = {};
-			for(var prop in _movies) {
-				if (_movies.hasOwnProperty(prop)) {
-					if (_movies[prop].favourite) {
-						_favourMovies[prop] = _movies[prop];
-					}
+			_moviesArrFavour = [];
+			_moviesArr.forEach(function(element) {
+				if(element.model.favourite) {
+					_moviesArrFavour.push(element);
 				}
-			}
-			return _favourMovies;
+			});
+			return _moviesArrFavour;
 		}
 
 		/* option - sort option, 0 - newest, 1 - oldest
 			favorite - favourite movies - true, otherwise - false	*/
-		function sortMovies(favourite, option) {
-			var movies = {};
-			if (!favourite) {
+		function sortMovies(favourite, sort) {
+			var movies = [];
+
+			if (favourite === 0) {
 				movies = getMovies();
 			}
-			else if (favourite) {
+			else if (favourite === 1) {
 				movies = getFavouriteMovies();
+				console.log('movies', movies)
 			}
-
-			var moviesArr = commonComponents.getSortedArray(movies, option);
-			return moviesArr;
+			return commonComponents.sortArray(movies, sort);
 		}
 
 
@@ -122,38 +129,18 @@ $(document).ready(function(){
 
 
 
-		function validateIfExists() {};
-		function updateRecord() {};
-		function getRecord() {};
-
-
-
-
-
-
-
-
-
-
-
-
 		return {
 			init: init,
-			updateMovie: updateMovie,
 			getMovies: getMovies,
 			getLibraryCount: getLibraryCount,
 			clearRecords: clearRecords,
 			deleteMovie: deleteMovie,
 			getFavouriteMovies: getFavouriteMovies,
 			getFavouriteCount: getFavouriteCount,
-			sortMovies: sortMovies
+			sortMovies: sortMovies,
+			addToCollection: addToCollection,
+			markVideoAsFavour: markVideoAsFavour
 		}
-
-
-
-
-
-
 
 	}());
 

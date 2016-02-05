@@ -21,15 +21,18 @@ var commonComponents = (function() {
 				});
 			}
 		}
+		return sortArray(arr, sort);
+	}
 
+	function sortArray(arr, sort) {
 		if(sort === 0) {
 			arr.sort(function(a, b) {
-				return a.value.dateNumber - b.value.dateNumber;
+				return a.model.dateNumber - b.model.dateNumber;
 			});
 		}
 		else if(sort === 1) {
 			arr.sort(function(a, b) {
-				return a.value.dateNumber + b.value.dateNumber;
+				return a.model.dateNumber + b.model.dateNumber;
 			});
 		}
 		return arr;
@@ -41,7 +44,8 @@ var commonComponents = (function() {
 
 	return {
 		overwrite: overwrite,
-		getSortedArray: getSortedArray
+		getSortedArray: getSortedArray,
+		sortArray: sortArray
 	}
 
 }());

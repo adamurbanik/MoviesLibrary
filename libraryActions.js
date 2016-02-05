@@ -9,7 +9,7 @@ $(document).ready(
 				initializeThumbMenu();
 			}
 
-			/* When the user clicks on the thumb, 
+			/* When the user clicks on the thumb,
 			toggle between hiding and showing the dropdown content */
 			function manageThumbMenu(thumbID) {
 				checkDropClassList();
@@ -22,7 +22,7 @@ $(document).ready(
 					if (!event.target.matches('.thumb')) {
 						checkDropClassList();
 					}
-				}	
+				}
 			}
 
 			function checkDropClassList() {
@@ -33,7 +33,7 @@ $(document).ready(
 					if (openDropdown.classList.contains('show')) {
 						openDropdown.classList.remove('show');
 					}
-				}		
+				}
 			}
 
 			function createDropDownMenu(thumb, movie) {
@@ -47,18 +47,18 @@ $(document).ready(
 				div1.appendChild(thumb);
 				registerHandlersModule.addHandler(thumb, "click", thumbHandler);
 
-				createParagraphElem(div1, "Tytuł: " + movie["title"]);
-				createParagraphElem(div1, "Author: " + movie["author"]);
-				createParagraphElem(div1, "Data: " + movie["date"] );
-				createParagraphElem(div1, "Ulubiony: " + movie["favourite"]);
+				createParagraphElem(div1, "Tytuł: " + movie.model["title"]);
+				createParagraphElem(div1, "Author: " + movie.model["author"]);
+				createParagraphElem(div1, "Data: " + movie.model["date"] );
+				createParagraphElem(div1, "Ulubiony: " + movie.model["favourite"]);
 
 				var div2 = document.createElement("div");
 				div2.id = thumb.id+"_IDdiv";
 				div2.className = "dropdown-content";
-
-				createLink(div2, "Odtwarzaj", thumb.id, "1");
-				createLink(div2, "Usuń", thumb.id, "2");
-				createLink(div2, "Dodaj do ulubionych", thumb.id, "3");
+				console.log(movie);
+				createLink(div2, "Odtwarzaj", movie.model.videoID, "1");
+				createLink(div2, "Usuń", movie.model.videoID, "2");
+				createLink(div2, "Dodaj do ulubionych", movie.model.videoID, "3");
 
 				div1.appendChild(div2);
 
@@ -78,7 +78,7 @@ $(document).ready(
 			function thumbHandler(event) {
 				// see what user decided to do
 				manageThumbMenu(event.currentTarget.id);
-			} 
+			}
 
 
 			function createLink(parentElement, text, id, href) {
@@ -92,7 +92,7 @@ $(document).ready(
 			}
 
 			function linkHandler(event) {
-				
+
 				var text = event.currentTarget.text;
 				switch(text) {
 					case "Odtwarzaj":
@@ -121,7 +121,7 @@ $(document).ready(
 			}
 
 			function addFavourite(linkID) {
-				myApp.libraryManagement.updateMovie(linkID, true);	
+				myApp.libraryManagement.markVideoAsFavour(linkID, true);
 			}
 
 
