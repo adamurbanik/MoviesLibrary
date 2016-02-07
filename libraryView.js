@@ -31,7 +31,7 @@ $(document).ready(
 			_paginNumber = document.getElementById("paginNumber");
 			registerHandlersModule.addHandler(_paginNumber, "change", render);
 
-			registerHandlersModule.addHandler(document.body, "collection:sync", render);
+			// registerHandlersModule.addHandler(document.body, "collection:sync", render);
 		}
 
 		function inputHandler() {
@@ -61,8 +61,11 @@ $(document).ready(
 		}
 
 		function displayThumbs() {
-				var movies = myApp.libraryManagement.sortMovies(_filterFav.selectedIndex, _filterSort.selectedIndex)
-				loadImages(movies);
+			var favour = _filterFav.selectedIndex;
+			var sort = _filterSort.selectedIndex;
+
+			var movies = myApp.libraryManagement.sortMovies(favour, sort);
+			loadImages(movies);
 		}
 
 		function validateInput(link) {

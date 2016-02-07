@@ -3,12 +3,10 @@ $(document).ready(function(){
 
 		myApp.libraryManagement = (function() {
 
-		// var _movies;
 		var _moviesArr;
 		var _moviesArrFavour;
 		var _input;
 		var _config;
-		// var _favourMovies;
 
 		function init(config) {
 			_config = config;
@@ -18,12 +16,8 @@ $(document).ready(function(){
 		/* Load all the records from the storage */
 		function initializeLibrary() {
 			var result = [];
-			var __moviesArr = JSON.parse(localStorage.getItem("_movies")) || [];
-			console.log(__moviesArr);
-			__moviesArr.forEach(function(item, index){
-				result.push(createModel(item.model));
-			});
-			_moviesArr = result;
+			_moviesArr = JSON.parse(localStorage.getItem("_movies")) || [];
+			console.log(_moviesArr);
 		}
 
 		function createModel(videoData) {
@@ -35,7 +29,9 @@ $(document).ready(function(){
 				thumb: "http://img.youtube.com/vi/"+videoId+"/1.jpg",
 				author: videoData["author"],
 				favourite: videoData["favourite"] || false,
-				videoID: videoId
+				videoID: videoId,
+				favourCount: 0,
+				viewingTimes : videoData["viewingTimes"] || 0
 			};
 
 			return {
@@ -44,13 +40,20 @@ $(document).ready(function(){
 		}
 
 		function addToCollection(videoData) {
-			_moviesArr.push(createModel(videoData));
-			updateStorage();
+			var videoId = videoData["video_id"] || videoData["videoID"];
+			if(getMovieByVideoId(videoId) !== -1) {
+				increaseViewingTimes(videoId);
+			}
+			else {
+				_moviesArr.push(createModel(videoData));
+				updateStorage();
+			}
 		}
 
 		function updateStorage() {
 			localStorage.setItem("_movies", JSON.stringify(_moviesArr));
-			document.body.dispatchEvent(new Event('collection:sync'));
+			myApp.libraryView.render();
+			// document.body.dispatchEvent(new Event('collection:sync'));
 		}
 
 		function clearRecords() {
@@ -78,13 +81,20 @@ $(document).ready(function(){
 					return _moviesArr[i];
 				}
 			}
+			return -1;
 		}
 
 		function markVideoAsFavour(videoId) {
 			var vid = getMovieByVideoId(videoId);
-			_moviesArr.splice(_moviesArr.indexOf(vid), 1);
-			vid.model.favourite = true;
-			addToCollection(vid.model);
+			_moviesArr[_moviesArr.indexOf(vid)].model.favourite = true;
+			_moviesArr[_moviesArr.indexOf(vid)].model.favourCount++;
+			updateStorage();
+		}
+
+		function increaseViewingTimes(videoId) {
+			var vid = getMovieByVideoId(videoId);
+			_moviesArr[_moviesArr.indexOf(vid)].model.viewingTimes++;
+			updateStorage();
 		}
 
 		function deleteMovie(videoID) {
@@ -139,7 +149,8 @@ $(document).ready(function(){
 			getFavouriteCount: getFavouriteCount,
 			sortMovies: sortMovies,
 			addToCollection: addToCollection,
-			markVideoAsFavour: markVideoAsFavour
+			markVideoAsFavour: markVideoAsFavour,
+			increaseViewingTimes: increaseViewingTimes
 		}
 
 	}());

@@ -51,11 +51,12 @@ $(document).ready(
 				createParagraphElem(div1, "Author: " + movie.model["author"]);
 				createParagraphElem(div1, "Data: " + movie.model["date"] );
 				createParagraphElem(div1, "Ulubiony: " + movie.model["favourite"]);
+				createParagraphElem(div1, "Ilość polubień: " + movie.model["favourCount"]);
+				createParagraphElem(div1, "Ilość odtworzeń: " + movie.model["viewingTimes"]);
 
 				var div2 = document.createElement("div");
 				div2.id = thumb.id+"_IDdiv";
 				div2.className = "dropdown-content";
-				console.log(movie);
 				createLink(div2, "Odtwarzaj", movie.model.videoID, "1");
 				createLink(div2, "Usuń", movie.model.videoID, "2");
 				createLink(div2, "Dodaj do ulubionych", movie.model.videoID, "3");
@@ -76,7 +77,6 @@ $(document).ready(
 
 
 			function thumbHandler(event) {
-				// see what user decided to do
 				manageThumbMenu(event.currentTarget.id);
 			}
 
