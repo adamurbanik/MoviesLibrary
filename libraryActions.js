@@ -38,7 +38,6 @@ $(document).ready(
 
 			function createDropDownMenu(thumb, movie) {
 				var div1 = document.createElement("div");
-				// div1.style.display = "none";
 				div1.className = "dropdown";
 				div1.classList.add("thumbs-el");
 
@@ -52,7 +51,7 @@ $(document).ready(
 				createParagraphElem(div1, "Data: " + movie.model["date"] );
 				createParagraphElem(div1, "Ulubiony: " + movie.model["favourite"]);
 				createParagraphElem(div1, "Ilość polubień: " + movie.model["favourCount"]);
-				createParagraphElem(div1, "Ilość odtworzeń: " + movie.model["viewingTimes"]);
+				createParagraphElem(div1, "Ilość odtworzeń: " + movie.model["viewingCount"]);
 
 				var div2 = document.createElement("div");
 				div2.id = thumb.id+"_IDdiv";
@@ -112,7 +111,13 @@ $(document).ready(
 			}
 
 			function playVideo(linkID) {
+				// if ()
+
 				myApp.managePlayerYT.playVideo(_config, linkID);
+				// document.getElementById('player').setAttribute("class", "hide");
+
+
+
 			}
 
 			function deleteMovie(linkID) {

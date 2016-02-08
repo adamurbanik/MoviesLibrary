@@ -31,7 +31,7 @@ $(document).ready(function(){
 				favourite: videoData["favourite"] || false,
 				videoID: videoId,
 				favourCount: 0,
-				viewingTimes : videoData["viewingTimes"] || 0
+				viewingCount : videoData["viewingCount"] || 0
 			};
 
 			return {
@@ -93,7 +93,7 @@ $(document).ready(function(){
 
 		function increaseViewingTimes(videoId) {
 			var vid = getMovieByVideoId(videoId);
-			_moviesArr[_moviesArr.indexOf(vid)].model.viewingTimes++;
+			_moviesArr[_moviesArr.indexOf(vid)].model.viewingCount++;
 			updateStorage();
 		}
 

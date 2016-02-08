@@ -53,11 +53,8 @@ $(document).ready(
 		//    The function indicates that when playing a video (state=1),
 		//    the player should play for six seconds and then stop.
 		function onPlayerStateChange(event) {
-			// var videoData = event.target.getVideoData();
 			if (event.data == YT.PlayerState.PLAYING) {
 				setTimeout(stopVideo, 6000);
-				var videoID = event.target.getVideoData()["video_id"];
-				// myApp.libraryManagement.updateMovie(videoID, false, event.target.getVideoData());
 				myApp.libraryManagement.addToCollection(event.target.getVideoData());
 			}
 

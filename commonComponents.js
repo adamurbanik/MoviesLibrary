@@ -38,14 +38,17 @@ var commonComponents = (function() {
 		return arr;
 	}
 
-
+	function log(s) {
+		console.log(s)
+	}
 
 
 
 	return {
 		overwrite: overwrite,
 		getSortedArray: getSortedArray,
-		sortArray: sortArray
+		sortArray: sortArray,
+		log: log
 	}
 
 }());

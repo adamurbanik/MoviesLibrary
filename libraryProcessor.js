@@ -3,7 +3,9 @@ $(document).ready(function($){
 
 			var _config = {
 				thumbs: "thumbs",
-				pagination: 5, 
+				pagination: 5,
+				width: 400,
+				height: 225
 
 			};
 
@@ -15,7 +17,7 @@ $(document).ready(function($){
 				myApp.libraryManagement.init(_config);
 				myApp.libraryActions.init(_config);
 				myApp.libraryView.init(_config);
-				// myApp.libraryPagination.init();
+				
 			}
 
 			return {

@@ -35,13 +35,14 @@ $(document).ready(
 		}
 
 		function inputHandler() {
-			value = _input.value;
+			var link = _input.value;
+			var input = validateInput(link);
 
-			var link = value;
-
-			var linkID = validateInput(link);
-			if (linkID !== -1) {
-				myApp.managePlayerYT.playVideo(_config, linkID);
+			if (input.provider === "youtube" && input.videoID !== -1) {
+				myApp.managePlayerYT.playVideo(_config, input.videoID);
+			}
+			else if(input.provider === "vimeo" && input.videoID !== -1) {
+					myApp.managePlayerVimeo.playVideo(_config, input.videoID);
 			}
 			_input.value = "";
 		}
@@ -69,7 +70,24 @@ $(document).ready(
 		}
 
 		function validateInput(link) {
-			return getYouTubeID(link);
+			var videoID;
+			try {
+				var provider = link.match(/https?:\/\/(:?www.)?(\w*)/)[2];
+				if (provider === "youtube") {
+					videoID = getYouTubeID(link);
+				}
+				else if (provider === "vimeo") {
+					videoID = getVimeoID(link);
+				}
+
+				return {
+					provider: provider,
+					videoID: videoID
+				}
+			}
+			catch(e) {
+				log("Wrong link entered. Error: " + e);
+			}
 		}
 
 		function getYouTubeID(url) {
@@ -78,6 +96,17 @@ $(document).ready(
 			if (match && match[2].length === 11) {
 				return match[2];
 			} else {
+				return -1;
+			}
+		}
+		/* group 1 - group name, 2 - albumID, group 3 - videoID */
+		function getVimeoID(url) {
+			var regExp = /https?:\/\/(?:www\.|player\.)?vimeo.com\/(?:channels\/(?:\w+\/)?|groups\/([^\/]*)\/videos\/|album\/(\d+)\/video\/|video\/|)(\d+)(?:$|\/|\?)/;
+			var match = url.match(regExp);
+			if (match && match[3].length > 0) {
+				return match[3];
+			}
+			else {
 				return -1;
 			}
 		}
