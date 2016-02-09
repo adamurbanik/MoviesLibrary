@@ -10,7 +10,6 @@ p {
 
 
 .thumb {
-
     color: white;
     padding-left: 16px;
     padding-right: 16px;
@@ -19,6 +18,11 @@ p {
 
     border: none;
     cursor: pointer;
+}
+
+.thumbList {
+  float: left;
+
 }
 
 .thumb:hover, .thumb:focus {

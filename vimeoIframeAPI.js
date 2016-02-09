@@ -6,7 +6,7 @@ $(document).ready(
       var _vimPlayer, _script, _playerYT;
 
       function initScript(url) {
-        var _script = document.createElement('script');
+        _script = document.createElement('script');
         _script.setAttribute('type', 'text/javascript');
         _script.setAttribute('src', url);
 
@@ -16,8 +16,8 @@ $(document).ready(
 
       function initPlayer(config) {
         _vimPlayer = document.getElementById("playerVimeo");
-        _vimPlayer.width = config.width;
-        _vimPlayer.height = config.height;
+        _vimPlayer.width = config.videoWidth;
+        _vimPlayer.height = config.videoHeight;
         _vimPlayer.frameborder="0";
         _vimPlayer.setAttribute("webkitAllowFullScreen","");
         _vimPlayer.setAttribute("mozallowfullscreen","");
@@ -27,29 +27,33 @@ $(document).ready(
 
       }
 
+      function getData(videos) {
+        videos.forEach(function(video) {
+          console.log(video);
+          var videoData = {
+            videoID: video["id"],
+            title: video["title"],
+            thumb: video["thumbnail_medium"],
+            author: video["user_name"],
+            source: "vimeo"
+          };
+          myApp.libraryManagement.addToCollection(videoData);
+        });
+      }
+
       function initializeJSONCallback() {
-        window["getData"] = function(videos) {
-          videos.forEach(function(video) {
-            console.log(video);
-            var videoData = {
-              videoID: video["id"],
-              title: video["title"],
-              thumb: video["thumbnail_medium"],
-              author: video["author"],
-              source: "vimeo"
-            };
-            myApp.libraryManagement.addToCollection(videoData);
-          });
-        }
+        window["getData"] = getData;
+      }
+
+      function loadVideoById(videoID) {
+        _vimPlayer.src = "http://player.vimeo.com/video/" + videoID + "?api=1&player_id=playerVimeo";
       }
 
       function playVideo(config, videoID) {
         var url = "http://vimeo.com/api/v2/video/" + videoID + ".json?callback=" + "getData";
+        console.log(url);
+        initScript(url);
 
-        if (typeof _script === "undefined") {
-            initScript(url);
-            initializeJSONCallback();
-        }
         if (typeof _vimPlayer === "undefined") {
           initPlayer(config, videoID);
         }
@@ -58,16 +62,12 @@ $(document).ready(
 
       }
 
-      function loadVideoById(videoID) {
-        _vimPlayer.src = "http://player.vimeo.com/video/" + videoID + "?api=1&player_id=playerVimeo";
-      }
-
+      initializeJSONCallback();
 
       return {
         playVideo: playVideo,
         loadVideoById: loadVideoById
       }
-
 
     }());
 });

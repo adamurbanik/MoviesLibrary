@@ -3,10 +3,18 @@ $(document).ready(
 		myApp.libraryActions = (function() {
 
 			var _config;
+			var _state;
 
 			function init(config) {
 				_config = config;
 				initializeThumbMenu();
+			}
+
+			function getState() {
+				return _state;
+			}
+			function setState(state) {
+				_state = state;
 			}
 
 			/* When the user clicks on the thumb,
@@ -95,6 +103,7 @@ $(document).ready(
 				var text = event.currentTarget.text;
 				switch(text) {
 					case "Odtwarzaj":
+					_state = 1;
 					playVideo(event.currentTarget.id);
 					break;
 
@@ -119,7 +128,6 @@ $(document).ready(
 				else if (movie.source === "vimeo") {
 					myApp.managePlayerVimeo.playVideo(_config, movie.videoID);
 				}
-
 
 			}
 
@@ -146,7 +154,9 @@ $(document).ready(
 			return {
 				init: init,
 				createDropDownMenu: createDropDownMenu,
-				thumbHandler: thumbHandler
+				thumbHandler: thumbHandler,
+				getState: getState,
+				setState: setState
 			}
 
 

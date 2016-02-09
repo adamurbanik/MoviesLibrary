@@ -147,7 +147,12 @@ $(document).ready(
 		function createThumb(movie) {
 			var img = new Image();
 			img.onload = function(event) {
+
+				var dimensions = commonComponents.calculateDimensions(_config, event.currentTarget);
 				var thumb = event.currentTarget;
+				thumb.width = dimensions.width;
+				thumb.height = dimensions.height;
+
 				myApp.libraryActions.createDropDownMenu(thumb, movie);
 				imgLoaded++;
 
@@ -165,8 +170,11 @@ $(document).ready(
 		}
 
 		function render() {
-			myApp.libraryPagination.removePagination();
-			displayThumbs();
+			if(myApp.libraryActions.getState() !== 1) {
+					myApp.libraryPagination.removePagination();
+					displayThumbs();
+			}
+			myApp.libraryActions.setState(0);
 		}
 
 

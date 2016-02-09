@@ -13,8 +13,8 @@ $(document).ready(
 
 		function createPlayerOptions(config, videoID) {
 			_playerOptions = {};
-			_playerOptions.height = config.height;
-			_playerOptions.width= config.width;
+			_playerOptions.width= config.videoWidth;
+			_playerOptions.height = config.videoHeight;
 			_playerOptions.videoId = videoID;
 			_playerOptions.events = {
 				'onReady': onPlayerReady,
@@ -57,7 +57,7 @@ $(document).ready(
 				setTimeout(stopVideo, 6000);
 				var videoData = event.target.getVideoData();
 				videoData["source"] = "youtube";
-				videoData["thumb"] = "http://img.youtube.com/vi/"+videoData["video_id"]+"/1.jpg"
+				videoData["thumb"] = "http://img.youtube.com/vi/"+videoData["video_id"]+"/0.jpg"
 				myApp.libraryManagement.addToCollection(videoData);
 			}
 		}

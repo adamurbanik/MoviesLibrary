@@ -67,6 +67,39 @@ var commonComponents = (function() {
 		player.classList.add("playerHide");
 	}
 
+	function calculateDimensions(config, img) {
+    var maxWidth = config.thumbWidth;
+    var maxHeight = config.thumbHeight;
+    var ratio = 0;
+    var width = img.width;
+    var height = img.height;
+    var positionX = 0;
+    var positionY = 0;
+
+    if (width > maxWidth) {
+      ratio = maxWidth / width;
+      height = height * ratio;
+      width = width * ratio;
+    }
+    if (height > maxHeight) {
+      ratio = maxHeight / height;
+      width = width * ratio;
+      height = height * ratio;
+    }
+
+    positionY = (maxHeight - height) / 2;
+    positionX = (maxWidth - width) / 2;
+
+    var dimensionsObj = {
+      "width" : width,
+      "height" : height,
+      "positionY" : positionY,
+      "positionX" : positionX
+    };
+
+    return dimensionsObj;
+
+  }
 
 	function log(s) {
 		console.log(s)
@@ -81,6 +114,7 @@ var commonComponents = (function() {
 		showPlayer: showPlayer,
 		hidePlayer: hidePlayer,
 		updateVideoPlayer: updateVideoPlayer,
+		calculateDimensions: calculateDimensions,
 		log: log
 	}
 
