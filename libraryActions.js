@@ -132,7 +132,6 @@ $(document).ready(
 			}
 
 			function deleteMovie(linkID) {
-				deleteThumbMenu(linkID);
 				myApp.libraryManagement.deleteMovie(linkID);
 			}
 

@@ -72,12 +72,13 @@ $(document).ready(
 		function validateInput(link) {
 			var videoID;
 			try {
-				var provider = link.match(/https?:\/\/(:?www.)?(\w*)/)[2];
-				if (provider === "youtube") {
+				if (getYouTubeID(link) !== -1) {
 					videoID = getYouTubeID(link);
+					provider = "youtube";
 				}
-				else if (provider === "vimeo") {
+				else if (getVimeoID(link) !== -1) {
 					videoID = getVimeoID(link);
+					provider = "vimeo";
 				}
 
 				return {

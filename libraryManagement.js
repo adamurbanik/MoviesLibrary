@@ -98,8 +98,18 @@ $(document).ready(function(){
 			updateStorage();
 		}
 
+		function getIndexByVideoID(videoID) {
+			for (var i = 0; i < _moviesArr.length; i++) {
+				if (_moviesArr[i].model.videoID == videoID) {
+					return i;
+				}
+			}
+			return -1;
+
+		}
+
 		function deleteMovie(videoID) {
-			var vid = getMovieByVideoId(videoID);
+			var vid = getIndexByVideoID(videoID);
 			_moviesArr.splice(vid, 1);
 			updateStorage();
 		}

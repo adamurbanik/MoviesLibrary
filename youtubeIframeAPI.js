@@ -9,7 +9,7 @@ $(document).ready(
 		var firstScriptTag = document.getElementsByTagName('script')[0];
 		firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-		var _playerOptions, _player, _iFrame;
+		var _playerOptions, _player, _iFrame, _ready;
 
 		function createPlayerOptions(config, videoID) {
 			_playerOptions = {};
@@ -46,6 +46,7 @@ $(document).ready(
 		// 4. The API will call this function when the video player is ready.
 		function onPlayerReady(event) {
 			event.target.playVideo();
+			_ready = true;
 			_iFrame = document.querySelector("iFrame");
 		}
 
@@ -74,7 +75,9 @@ $(document).ready(
 		}
 
 		function stopVideo() {
-			_player.stopVideo();
+			if (typeof _player !== "undefined") {
+				_player.stopVideo();
+			}
 		}
 
 		function playCustomVideo(linkID) {
@@ -82,6 +85,9 @@ $(document).ready(
 			frameborder="0";
 		}
 
+		function isPlayerReady() {
+			return _ready === true;
+		}
 
 		function log(s) {
 			console.log(s)
@@ -94,7 +100,9 @@ $(document).ready(
 			getPlayer: getPlayer,
 			initializePlayer: initializePlayer,
 			playVideo: playVideo,
-			playCustomVideo: playCustomVideo
+			playCustomVideo: playCustomVideo,
+			stopVideo: stopVideo,
+			isPlayerReady: isPlayerReady
 
 		}
 
