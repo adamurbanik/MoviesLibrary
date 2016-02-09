@@ -38,6 +38,36 @@ var commonComponents = (function() {
 		return arr;
 	}
 
+	/* Show player 1, Hide player 2*/
+	function updateVideoPlayer(playerName) {
+		var ytplayer = document.getElementById("player");
+		var vimplayer =  document.getElementById("playerVimeo");
+
+		if (playerName === "youtube") {
+			showPlayer(ytplayer);
+			hidePlayer(vimplayer);
+		}
+		else if (playerName === "vimeo") {
+			showPlayer(vimplayer);
+			hidePlayer(ytplayer);
+		}
+	}
+
+	function showPlayer(player) {
+		if (player.classList.contains("playerHide")) {
+			player.classList.remove("playerHide");
+		}
+		player.classList.add("playerShow");
+	}
+
+	function hidePlayer(player) {
+		if (player.classList.contains("playerShow")) {
+			player.classList.remove("playerShow");
+		}
+		player.classList.add("playerHide");
+	}
+
+
 	function log(s) {
 		console.log(s)
 	}
@@ -48,6 +78,9 @@ var commonComponents = (function() {
 		overwrite: overwrite,
 		getSortedArray: getSortedArray,
 		sortArray: sortArray,
+		showPlayer: showPlayer,
+		hidePlayer: hidePlayer,
+		updateVideoPlayer: updateVideoPlayer,
 		log: log
 	}
 

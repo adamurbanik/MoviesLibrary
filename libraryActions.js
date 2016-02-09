@@ -111,11 +111,14 @@ $(document).ready(
 			}
 
 			function playVideo(linkID) {
-				// if ()
-
-				myApp.managePlayerYT.playVideo(_config, linkID);
-				// document.getElementById('player').setAttribute("class", "hide");
-
+				var object = myApp.libraryManagement.getMovieByVideoId(linkID);
+				var movie = object.model;
+				if (movie.source === "youtube") {
+						myApp.managePlayerYT.playVideo(_config, movie.videoID);
+				}
+				else if (movie.source === "vimeo") {
+					myApp.managePlayerVimeo.playVideo(_config, movie.videoID);
+				}
 
 
 			}

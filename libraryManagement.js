@@ -26,12 +26,13 @@ $(document).ready(function(){
 				title: videoData["title"],
 				date: new Date().toISOString(),
 				dateNumber: Date.now(),
-				thumb: "http://img.youtube.com/vi/"+videoId+"/1.jpg",
+				thumb: videoData["thumb"],
 				author: videoData["author"],
 				favourite: videoData["favourite"] || false,
 				videoID: videoId,
 				favourCount: 0,
-				viewingCount : videoData["viewingCount"] || 0
+				viewingCount : videoData["viewingCount"] || 0,
+				source: videoData["source"]
 			};
 
 			return {
@@ -150,7 +151,8 @@ $(document).ready(function(){
 			sortMovies: sortMovies,
 			addToCollection: addToCollection,
 			markVideoAsFavour: markVideoAsFavour,
-			increaseViewingTimes: increaseViewingTimes
+			increaseViewingTimes: increaseViewingTimes,
+			getMovieByVideoId: getMovieByVideoId
 		}
 
 	}());

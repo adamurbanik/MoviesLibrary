@@ -55,9 +55,11 @@ $(document).ready(
 		function onPlayerStateChange(event) {
 			if (event.data == YT.PlayerState.PLAYING) {
 				setTimeout(stopVideo, 6000);
-				myApp.libraryManagement.addToCollection(event.target.getVideoData());
+				var videoData = event.target.getVideoData();
+				videoData["source"] = "youtube";
+				videoData["thumb"] = "http://img.youtube.com/vi/"+videoData["video_id"]+"/1.jpg"
+				myApp.libraryManagement.addToCollection(videoData);
 			}
-
 		}
 
 		function playVideo(config, linkID) {
@@ -67,6 +69,8 @@ $(document).ready(
 			else {
 				_player.loadVideoById(linkID);
 			}
+			var vimPlayer = document.getElementById("playerVimeo");
+			commonComponents.updateVideoPlayer("youtube");
 		}
 
 		function stopVideo() {
