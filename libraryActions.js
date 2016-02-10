@@ -1,163 +1,162 @@
-$(document).ready(
-	function(){
-		myApp.libraryActions = (function() {
+$(document).ready(function(){
+ myApp.libraryActions = (function() {
 
-			var _config;
-			var _state;
+  var _config;
+  var _state;
 
-			function init(config) {
-				_config = config;
-				initializeThumbMenu();
-			}
+  function init(config) {
+   _config = config;
+   initializeThumbMenu();
+  }
+  
+  function getState() {
+   return _state;
+  }
+  function setState(state) {
+   _state = state;
+  }
 
-			function getState() {
-				return _state;
-			}
-			function setState(state) {
-				_state = state;
-			}
+  /* When the user clicks on the thumb,
+  toggle between hiding and showing the dropdown content */
+  function manageThumbMenu(thumbID) {
+   checkDropClassList();
+   document.getElementById(thumbID + "_IDdiv").classList.toggle("show");
+  }
 
-			/* When the user clicks on the thumb,
-			toggle between hiding and showing the dropdown content */
-			function manageThumbMenu(thumbID) {
-				checkDropClassList();
-				document.getElementById(thumbID + "_IDdiv").classList.toggle("show");
-			}
+  function initializeThumbMenu() {
+   // Close the dropdown menu if the user clicks outside of it
+   window.onclick = function(event) {
+    if (!event.target.matches('.thumb')) {
+     checkDropClassList();
+    }
+   }
+  }
 
-			function initializeThumbMenu() {
-				// Close the dropdown menu if the user clicks outside of it
-				window.onclick = function(event) {
-					if (!event.target.matches('.thumb')) {
-						checkDropClassList();
-					}
-				}
-			}
+  function checkDropClassList() {
+   var dropdowns = document.getElementsByClassName("dropdown-content");
+   var i;
+   for (i = 0; i < dropdowns.length; i++) {
+    var openDropdown = dropdowns[i];
+    if (openDropdown.classList.contains('show')) {
+     openDropdown.classList.remove('show');
+    }
+   }
+  }
 
-			function checkDropClassList() {
-				var dropdowns = document.getElementsByClassName("dropdown-content");
-				var i;
-				for (i = 0; i < dropdowns.length; i++) {
-					var openDropdown = dropdowns[i];
-					if (openDropdown.classList.contains('show')) {
-						openDropdown.classList.remove('show');
-					}
-				}
-			}
+  function createDropDownMenu(thumb, movie) {
+   var div1 = document.createElement("div");
+   div1.className = "dropdown";
+   div1.classList.add("thumbs-el");
 
-			function createDropDownMenu(thumb, movie) {
-				var div1 = document.createElement("div");
-				div1.className = "dropdown";
-				div1.classList.add("thumbs-el");
+   thumb.className = "thumb";
 
-				thumb.className = "thumb";
+   div1.appendChild(thumb);
+   registerHandlersModule.addHandler(thumb, "click", thumbHandler);
 
-				div1.appendChild(thumb);
-				registerHandlersModule.addHandler(thumb, "click", thumbHandler);
+   createParagraphElem(div1, "Tytuł: " + movie.model["title"]);
+   createParagraphElem(div1, "Author: " + movie.model["author"]);
+   createParagraphElem(div1, "Data: " + movie.model["date"] );
+   createParagraphElem(div1, "Ulubiony: " + movie.model["favourite"]);
+   createParagraphElem(div1, "Ilość polubień: " + movie.model["favourCount"]);
+   createParagraphElem(div1, "Ilość odtworzeń: " + movie.model["viewingCount"]);
 
-				createParagraphElem(div1, "Tytuł: " + movie.model["title"]);
-				createParagraphElem(div1, "Author: " + movie.model["author"]);
-				createParagraphElem(div1, "Data: " + movie.model["date"] );
-				createParagraphElem(div1, "Ulubiony: " + movie.model["favourite"]);
-				createParagraphElem(div1, "Ilość polubień: " + movie.model["favourCount"]);
-				createParagraphElem(div1, "Ilość odtworzeń: " + movie.model["viewingCount"]);
+   var div2 = document.createElement("div");
+   div2.id = thumb.id+"_IDdiv";
+   div2.className = "dropdown-content";
+   createLink(div2, "Odtwarzaj", movie.model.videoID, "1");
+   createLink(div2, "Usuń", movie.model.videoID, "2");
+   createLink(div2, "Dodaj do ulubionych", movie.model.videoID, "3");
 
-				var div2 = document.createElement("div");
-				div2.id = thumb.id+"_IDdiv";
-				div2.className = "dropdown-content";
-				createLink(div2, "Odtwarzaj", movie.model.videoID, "1");
-				createLink(div2, "Usuń", movie.model.videoID, "2");
-				createLink(div2, "Dodaj do ulubionych", movie.model.videoID, "3");
+   div1.appendChild(div2);
 
-				div1.appendChild(div2);
-
-				document.getElementById(_config.thumbs).appendChild(div1);
-
-
-			}
-
-			function createParagraphElem(parentElement, text) {
-				var p = document.createElement("p");
-				var text = document.createTextNode(text);
-				p.appendChild(text);
-				parentElement.appendChild(p);
-			}
+   document.getElementById(_config.thumbs).appendChild(div1);
 
 
-			function thumbHandler(event) {
-				manageThumbMenu(event.currentTarget.id);
-			}
+  }
+
+  function createParagraphElem(parentElement, text) {
+   var p = document.createElement("p");
+   var text = document.createTextNode(text);
+   p.appendChild(text);
+   parentElement.appendChild(p);
+  }
 
 
-			function createLink(parentElement, text, id, href) {
-				var a = document.createElement("a");
-				a.href = "#"+href;
-				a.id = id;
-				var text = document.createTextNode(text);
-				a.appendChild(text);
-				registerHandlersModule.addHandler(a, "click", linkHandler);
-				parentElement.appendChild(a);
-			}
-
-			function linkHandler(event) {
-
-				var text = event.currentTarget.text;
-				switch(text) {
-					case "Odtwarzaj":
-					_state = 1;
-					playVideo(event.currentTarget.id);
-					break;
-
-					case "Usuń":
-					deleteMovie(event.currentTarget.id)
-					break;
-
-					case "Dodaj do ulubionych":
-					addFavourite(event.currentTarget.id);
-					break;
-
-				}
-
-			}
-
-			function playVideo(linkID) {
-				var object = myApp.libraryManagement.getMovieByVideoId(linkID);
-				var movie = object.model;
-				if (movie.source === "youtube") {
-						myApp.managePlayerYT.playVideo(_config, movie.videoID);
-				}
-				else if (movie.source === "vimeo") {
-					myApp.managePlayerVimeo.playVideo(_config, movie.videoID);
-				}
-
-			}
-
-			function deleteMovie(linkID) {
-				myApp.libraryManagement.deleteMovie(linkID);
-			}
-
-			function addFavourite(linkID) {
-				myApp.libraryManagement.markVideoAsFavour(linkID, true);
-			}
+  function thumbHandler(event) {
+   manageThumbMenu(event.currentTarget.id);
+  }
 
 
-			function deleteThumbMenu(linkID) {
-				var img = document.getElementById(linkID);
-				var dropdown = img.parentElement;
-				dropdown.parentElement.removeChild(dropdown);
-			}
+  function createLink(parentElement, text, id, href) {
+   var a = document.createElement("a");
+   a.href = "#"+href;
+   a.id = id;
+   var text = document.createTextNode(text);
+   a.appendChild(text);
+   registerHandlersModule.addHandler(a, "click", linkHandler);
+   parentElement.appendChild(a);
+  }
 
-			function log(s) {
-				console.log(s)
-			}
+  function linkHandler(event) {
 
-			return {
-				init: init,
-				createDropDownMenu: createDropDownMenu,
-				thumbHandler: thumbHandler,
-				getState: getState,
-				setState: setState
-			}
+   var text = event.currentTarget.text;
+   switch(text) {
+    case "Odtwarzaj":
+    _state = 1;
+    playVideo(event.currentTarget.id);
+    break;
+
+    case "Usuń":
+    deleteMovie(event.currentTarget.id)
+    break;
+
+    case "Dodaj do ulubionych":
+    addFavourite(event.currentTarget.id);
+    break;
+
+   }
+
+  }
+
+  function playVideo(linkID) {
+   var object = myApp.libraryManagement.getMovieByVideoId(linkID);
+   var movie = object.model;
+   if (movie.source === "youtube") {
+    myApp.managePlayerYT.playVideo(_config, movie.videoID);
+   }
+   else if (movie.source === "vimeo") {
+    myApp.managePlayerVimeo.playVideo(_config, movie.videoID);
+   }
+
+  }
+
+  function deleteMovie(linkID) {
+   myApp.libraryManagement.deleteMovie(linkID);
+  }
+
+  function addFavourite(linkID) {
+   myApp.libraryManagement.markVideoAsFavour(linkID, true);
+  }
 
 
-		}());
+  function deleteThumbMenu(linkID) {
+   var img = document.getElementById(linkID);
+   var dropdown = img.parentElement;
+   dropdown.parentElement.removeChild(dropdown);
+  }
+
+  function log(s) {
+   console.log(s)
+  }
+
+  return {
+   init: init,
+   createDropDownMenu: createDropDownMenu,
+   thumbHandler: thumbHandler,
+   getState: getState,
+   setState: setState
+  }
+
+
+ }());
 });
